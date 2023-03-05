@@ -1,0 +1,15 @@
+﻿@using ZIFEIYU.Model;
+
+@foreach (var item in Messages)
+{
+    <h1>@item.Role</h1>
+    <SurveyPrompt Title="@item.Content" />
+}
+
+
+
+@code {
+    [Parameter]
+    public List<Message> Messages { get; set; } 
+}
+

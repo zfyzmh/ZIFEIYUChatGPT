@@ -1,7 +1,41 @@
 ﻿@page "/"
+@using System.Diagnostics;
+@using ZIFEIYU.Model;
+@using ZIFEIYU.Services;
+@using ZIFEIYU.util;
+@inject IChatGPTServices ChatGPTServices
 
-<h1>Hello, world!</h1>
+<div class="main">
+    <div class="body">
+        <Dialogue Messages="Messages"></Dialogue>
+        @Text
+    </div>
+    <div class="bottom">
+        <div style="margin-top:10px;margin-right:5px;">
 
-Welcome to your new app.
+            <MudFab Size="Size.Medium" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Refresh" />
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+        </div>
+        <MudTextField T="string" Label="请输入你的问题" Variant="Variant.Filled" @bind-Value="HelperText" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Send" OnAdornmentClick="@(Send)" />
+    </div>
+</div>
+
+
+@code {
+    public string HelperText { get; set; }
+    public string Text { get; set; }
+    private MudTextField<string> singleLineReference;
+    public List<Message> Messages { get; set; } = new List<Message>();
+
+    async void Send()
+    {
+        Dictionary<string, string> Headers = new Dictionary<string, string>();
+        Headers.Add("Authorization", "Bearer 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");
+        Stopwatch sw = new Stopwatch();
+        sw.Start();
+        var aa = HttpHelper.HttpPost<DavinciOutput>("https://api.openai.com/v1/completions", JsonHelper.SerializeObject(new DavinciInput(HelperText)), headers: Headers);
+        Text = JsonHelper.SerializeObject(aa);
+        sw.Stop();
+        HelperText = $"程序耗时：{sw.ElapsedMilliseconds}ms.";
+    }
+}

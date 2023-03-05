@@ -2,5 +2,17 @@
   {
     "outputFile": "Shared/MainLayout.razor.css",
     "inputFile": "Shared/MainLayout.razor.scss"
+  },
+  {
+    "outputFile": "Pages/Index.razor.css",
+    "inputFile": "Pages/Index.razor.scss"
+  },
+  {
+    "outputFile": "Shared/Dialogue.razor.css",
+    "inputFile": "Shared/Dialogue.razor.scss"
+  },
+  {
+    "outputFile": "Pages/Counter.razor.css",
+    "inputFile": "Pages/Counter.razor.scss"
   }
 ]

@@ -1,0 +1,12 @@
+.main {
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: 80vh auto;
+
+    .body {
+    }
+
+    .bottom{
+        display:flex;
+    }
+}
