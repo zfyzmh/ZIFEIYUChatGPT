@@ -3,7 +3,7 @@
 @using ZIFEIYU.Model;
 @using ZIFEIYU.Services;
 @using ZIFEIYU.util;
-@inject IChatGPTServices ChatGPTServices
+@inject ChatGPTServices ChatGPTServices
 
 <div class="main">
     <div class="body">
@@ -33,7 +33,7 @@
         Headers.Add("Authorization", "Bearer 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");
         Stopwatch sw = new Stopwatch();
         sw.Start();
-        var aa = HttpHelper.HttpPost<DavinciOutput>("https://api.openai.com/v1/completions", JsonHelper.SerializeObject(new DavinciInput(HelperText)), headers: Headers);
+        var aa = ChatGPTServices.GetDavinci(new DavinciInput(HelperText));
         Text = JsonHelper.SerializeObject(aa);
         sw.Stop();
         HelperText = $"程序耗时：{sw.ElapsedMilliseconds}ms.";

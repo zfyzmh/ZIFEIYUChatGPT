@@ -28,7 +28,7 @@ public static class MauiProgram
 #endif
             services.AddSingleton<WeatherForecastService>();
             //services.AddSingleton(sp => new HttpClient { BaseAddress = new Uri("https://api.openai.com/v1") });
-            services.AddSingleton<IChatGPTServices, ChatGPTServices>();
+            services.AddSingleton<ChatGPTServices>();
             services.AddMudServices();
         }
     }

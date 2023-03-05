@@ -1,12 +1,33 @@
 .main {
+    height: 90vh;
     display: grid;
     grid-template-columns: auto;
-    grid-template-rows: 80vh auto;
+    grid-template-rows: 1fr 150px;
 
     .body {
     }
 
     .bottom {
         display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
+
+@media (min-width: 641px) {
+    .main {
+        height: 100vh;
+        display: grid;
+        grid-template-columns: auto;
+        grid-template-rows: 1fr 150px;
+
+        .body {
+        }
+
+        .bottom {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
     }
 }

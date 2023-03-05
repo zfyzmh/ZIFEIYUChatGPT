@@ -82,3 +82,7 @@ a, .btn-link {
 		padding-left: env(safe-area-inset-left);
 	}
 }
+body {
+    overflow: hidden;
+    height: 100vh;
+}

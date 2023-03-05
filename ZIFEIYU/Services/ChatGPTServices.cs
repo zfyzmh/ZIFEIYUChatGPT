@@ -3,7 +3,7 @@ using ZIFEIYU.util;
 
 namespace ZIFEIYU.Services
 {
-    public class ChatGPTServices : IChatGPTServices
+    public class ChatGPTServices
     {
         private Dictionary<string, string> Headers = new Dictionary<string, string>();
 

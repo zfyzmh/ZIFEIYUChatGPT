@@ -1,7 +1,10 @@
 ﻿@page "/counter"
 @using System.Diagnostics;
 @using ZIFEIYU.Model;
+@using ZIFEIYU.Services;
 @using ZIFEIYU.util;
+@inject ChatGPTServices ChatGPTServices
+
 <div class="main">
     <div class="body">
         <Dialogue Messages="Messages"></Dialogue>
@@ -15,10 +18,14 @@
         }
     </div>
     <div class="bottom">
-        <div style="margin-top:10px;margin-right:5px;">
-            <MudFab Size="Size.Medium" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Refresh" />
+        <div style="margin-right:5px;">
+            <MudFab OnClick="()=>{HelperText=String.Empty;}" Size="Size.Medium" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Refresh" />
         </div>
-        <MudTextField T="string" Label="请输入你的问题" Variant="Variant.Filled" @bind-Value="HelperText" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Send" OnAdornmentClick="@(Send)" />
+        <MudTextField T="string" Label="请输入你的问题" Variant="Variant.Filled" @bind-Value="HelperText" />
+        <div style="margin-left:10px;">
+            <MudFab Size="Size.Medium" OnClick="@Send" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Send" Disabled="_processing">
+            </MudFab>
+        </div>
     </div>
 </div>
 
@@ -29,13 +36,14 @@
     DavinciOutput davinciOutput { get; set; }
     private MudTextField<string> singleLineReference;
     public List<Message> Messages { get; set; } = new List<Message>();
-
-    async void Send()
+    private bool _processing = false;
+    async Task Send()
     {
+        _processing = true;
         Dictionary<string, string> Headers = new Dictionary<string, string>();
         Headers.Add("Authorization", "Bearer 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");
-
-        davinciOutput = await HttpHelper.HttpPostAsync<DavinciOutput>("https://api.openai.com/v1/completions", JsonHelper.SerializeObject(new DavinciInput(HelperText)), headers: Headers);
+        davinciOutput = await ChatGPTServices.GetDavinci(new DavinciInput(HelperText)); 
         StateHasChanged();
+        _processing = false;
     }
 }
