@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.WebView.Maui;
+using MudBlazor.Services;
 using ZIFEIYU.Data;
 
 namespace ZIFEIYU;
@@ -21,7 +22,7 @@ public static class MauiProgram
 #endif
 		
 		builder.Services.AddSingleton<WeatherForecastService>();
-
-		return builder.Build();
+        builder.Services.AddMudServices();
+        return builder.Build();
 	}
 }
