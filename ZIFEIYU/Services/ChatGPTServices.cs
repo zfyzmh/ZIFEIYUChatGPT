@@ -16,5 +16,10 @@ namespace ZIFEIYU.Services
         {
             return await HttpHelper.HttpPostAsync<DavinciOutput>("https://api.openai.com/v1/completions", JsonHelper.SerializeObject(davinciInput), headers: Headers);
         }
+
+        public async Task<DialogueOutput> SendDialogue(DialogueInput dialogueInput)
+        {
+            return await HttpHelper.HttpPostAsync<DialogueOutput>("https://api.openai.com/v1/chat/completions", JsonHelper.SerializeObject(dialogueInput), headers: Headers);
+        }
     }
 }

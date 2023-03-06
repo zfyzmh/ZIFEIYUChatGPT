@@ -1,41 +1,27 @@
 ﻿@page "/"
 @using System.Diagnostics;
-@using ZIFEIYU.Model;
-@using ZIFEIYU.Services;
-@using ZIFEIYU.util;
-@inject ChatGPTServices ChatGPTServices
+@inherits IndexBase
+
 
 <div class="main">
     <div class="body">
         <Dialogue Messages="Messages"></Dialogue>
-        @Text
+        @if (davinciOutput != null)
+        {
+            foreach (var item in davinciOutput.Choices)
+            {
+                <SurveyPrompt Title="@item.Text" />
+            }
+        }
     </div>
     <div class="bottom">
-        <div style="margin-top:10px;margin-right:5px;">
-
-            <MudFab Size="Size.Medium" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Refresh" />
-
+        <div style="margin-right:5px;">
+            <MudFab OnClick="()=>{HelperText=String.Empty;}" Size="Size.Small" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Refresh" />
         </div>
-        <MudTextField T="string" Label="请输入你的问题" Variant="Variant.Filled" @bind-Value="HelperText" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Send" OnAdornmentClick="@(Send)" />
+        <MudTextField T="string" Label="请输入你的问题"  Variant="Variant.Filled" @bind-Value="HelperText" />
+        <div style="margin-left:10px;">
+            <MudFab Size="Size.Small" OnClick="@Send" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Send" Disabled="_processing">
+            </MudFab>
+        </div>
     </div>
 </div>
-
-
-@code {
-    public string HelperText { get; set; }
-    public string Text { get; set; }
-    private MudTextField<string> singleLineReference;
-    public List<Message> Messages { get; set; } = new List<Message>();
-
-    async void Send()
-    {
-        Dictionary<string, string> Headers = new Dictionary<string, string>();
-        Headers.Add("Authorization", "Bearer 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");
-        Stopwatch sw = new Stopwatch();
-        sw.Start();
-        var aa = ChatGPTServices.GetDavinci(new DavinciInput(HelperText));
-        Text = JsonHelper.SerializeObject(aa);
-        sw.Stop();
-        HelperText = $"程序耗时：{sw.ElapsedMilliseconds}ms.";
-    }
-}
