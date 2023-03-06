@@ -2,11 +2,24 @@
 
 @foreach (var item in Messages)
 {
-    <h1>@item.Role</h1>
-    <SurveyPrompt Title="@item.Content" />
+    @if (item.Role!="user")
+    {
+        <div class="alert alert-secondary mt-4 message" style="display:inline-block;">
+            <strong>@item.Content</strong>
+            <span class="bi bi-android2" aria-hidden="true"></span>
+        </div>
+    }
+    else
+    {
+        <div style="display:flex;" dir="rtl">
+            <div class="alert alert-secondary mt-4 message" style=" display:flex; display:inline-block;" dir="rtl">
+                <span class="bi bi-airplane-fill" aria-hidden="true"></span>
+                <strong>@item.Content</strong>
+            </div>
+        </div>
+    }
+
 }
-
-
 
 @code {
     [Parameter]

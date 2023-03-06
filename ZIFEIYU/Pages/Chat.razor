@@ -1,0 +1,24 @@
+﻿@page "/"
+@using System.Diagnostics;
+@inherits ChatBase
+
+
+<div class="main">
+    <div  id="IndexBody" class="body">
+        <Dialogue Messages="Messages"></Dialogue>
+    </div>
+    <div class="bottom">
+        <div style="margin-right:5px;">
+            <SpinLoader IsLoading="_processing">
+                <ContentTemplate>
+                    <MudFab OnClick="()=>{HelperText=String.Empty;}" Size="Size.Small" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Refresh" />
+                </ContentTemplate>
+            </SpinLoader>
+        </div>
+        <MudTextField T="string" Style="height:45px;"  Variant="Variant.Filled" @bind-Value="HelperText" />
+        <div style="margin-left:10px;">
+            <MudFab Size="Size.Small" OnClick="@Send" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Send" Disabled="_processing">
+            </MudFab>
+        </div>
+    </div>
+</div>

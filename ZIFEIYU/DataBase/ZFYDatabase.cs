@@ -20,10 +20,10 @@ namespace ZIFEIYU.DataBase
         {
         }
 
-        //public void Init()
-        //{
-        //    CreateTableResult result = Database.CreateTableAsync<Test>().Result;
-        //}
+        public void Init()
+        {
+            CreateTableResult result = Database.CreateTableAsync<Test>().Result;
+        }
 
         //public async Task<List<TodoItem>> GetItemsAsync()
         //{

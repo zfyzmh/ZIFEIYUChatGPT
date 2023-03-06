@@ -1,19 +1,19 @@
-﻿@page "/"
+﻿@page "/Quiz"
 @using System.Diagnostics;
-@inherits IndexBase
-
+@using ZIFEIYU.Model;
+@using ZIFEIYU.Services;
+@using ZIFEIYU.util;
+@inject ChatGPTServices ChatGPTServices
 
 <div class="main">
     <div class="body">
-        <MudFab Size="Size.Small" OnClick="@Test" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Send" Disabled="_processing">
-            测试
-        </MudFab>
         <Dialogue Messages="Messages"></Dialogue>
         @if (davinciOutput != null)
         {
             foreach (var item in davinciOutput.Choices)
             {
                 <SurveyPrompt Title="@item.Text" />
+
             }
         }
     </div>
@@ -28,3 +28,22 @@
         </div>
     </div>
 </div>
+
+
+@code {
+    public string HelperText { get; set; }
+    public string Text { get; set; }
+    DavinciOutput davinciOutput { get; set; }
+    private MudTextField<string> singleLineReference;
+    public List<DialogueMessage> Messages { get; set; } = new List<DialogueMessage>();
+    private bool _processing = false;
+    async Task Send()
+    {
+        _processing = true;
+        Dictionary<string, string> Headers = new Dictionary<string, string>();
+        Headers.Add("Authorization", "Bearer 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");
+        davinciOutput = await ChatGPTServices.GetDavinci(new DavinciInput(HelperText)); 
+        StateHasChanged();
+        _processing = false;
+    }
+}

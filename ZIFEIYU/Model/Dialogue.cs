@@ -4,6 +4,12 @@ namespace ZIFEIYU.Model
 {
     public class DialogueInput
     {
+       public DialogueInput( List<DialogueMessage> messages)
+        {
+            Model = "gpt-3.5-turbo";
+            Messages = messages;
+        }
+    
         [JsonProperty("model")]
         public string Model { get; set; }
 

@@ -59,13 +59,16 @@
 
     <ItemGroup>
       <Content Remove="compilerconfig.json" />
+      <Content Remove="wwwroot\css\.editorconfig" />
     </ItemGroup>
 
     <ItemGroup>
       <None Include="compilerconfig.json" />
+      <None Include="wwwroot\css\.editorconfig" />
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="BlazorPro.Spinkit" Version="1.2.0" />
       <PackageReference Include="MudBlazor" Version="6.1.9" />
       <PackageReference Include="MudBlazor.Markdown" Version="0.1.0" />
       <PackageReference Include="MudBlazor.ThemeManager" Version="1.0.7" />

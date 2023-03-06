@@ -3,8 +3,15 @@
     display: grid;
     grid-template-columns: auto;
     grid-template-rows: 1fr 120px;
+    background-color: #15151f;
 
     .body {
+        overflow-y: scroll;
+        color: #7767ff;
+
+        &::-webkit-scrollbar {
+            display: none; /* Chrome Safari */
+        }
     }
 
     .bottom {
@@ -22,6 +29,7 @@
         grid-template-rows: 1fr 120px;
 
         .body {
+            color: #7767ff;
         }
 
         .bottom {
