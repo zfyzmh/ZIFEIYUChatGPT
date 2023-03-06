@@ -1,6 +1,6 @@
 ﻿using MudBlazor.Services;
-using System.Net.Http.Headers;
 using ZIFEIYU.Data;
+using ZIFEIYU.DataBase;
 using ZIFEIYU.Services;
 
 namespace ZIFEIYU;
@@ -17,7 +17,7 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
             });
         ConfigureServices(builder.Services);
-
+        builder.Services.BuildServiceProvider().GetService<ZFYDatabase>().Init();
         return builder.Build();
 
         void ConfigureServices(IServiceCollection services)
@@ -30,6 +30,7 @@ public static class MauiProgram
             //services.AddSingleton(sp => new HttpClient { BaseAddress = new Uri("https://api.openai.com/v1") });
             services.AddSingleton<ChatGPTServices>();
             services.AddMudServices();
+            services.AddSingleton<ZFYDatabase>();
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using ZIFEIYU.DataBase;
+using ZIFEIYU.Entity;
 using ZIFEIYU.Model;
 using ZIFEIYU.Services;
 
@@ -13,6 +15,9 @@ namespace ZIFEIYU.Pages
 
         [Inject]
         public ChatGPTServices ChatGPTServices { get; set; }
+
+        [Inject]
+        public ZFYDatabase ZFYDatabase { get; set; }
 
         public string HelperText { get; set; }
         public string Text { get; set; }
@@ -29,6 +34,12 @@ namespace ZIFEIYU.Pages
             davinciOutput = await ChatGPTServices.GetDavinci(new DavinciInput(HelperText));
             StateHasChanged();
             _processing = false;
+        }
+
+        public async Task Test()
+        {
+            await ZFYDatabase.Database.InsertAsync(new Test() { MyProperty = "测试" });
+            var aa = await ZFYDatabase.Database.Table<Test>().FirstAsync();
         }
     }
 }

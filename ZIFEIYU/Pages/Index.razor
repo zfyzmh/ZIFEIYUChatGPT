@@ -5,6 +5,9 @@
 
 <div class="main">
     <div class="body">
+        <MudFab Size="Size.Small" OnClick="@Test" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Send" Disabled="_processing">
+            测试
+        </MudFab>
         <Dialogue Messages="Messages"></Dialogue>
         @if (davinciOutput != null)
         {
