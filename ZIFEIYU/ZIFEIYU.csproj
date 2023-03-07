@@ -38,6 +38,7 @@
         <GenerateTestArtifacts>True</GenerateTestArtifacts>
         <AppInstallerUri>D:\Test</AppInstallerUri>
         <HoursBetweenUpdateChecks>168000</HoursBetweenUpdateChecks>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0-android|AnyCPU'">

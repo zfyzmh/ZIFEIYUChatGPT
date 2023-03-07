@@ -1,5 +1,4 @@
 ﻿using MudBlazor.Services;
-using ZIFEIYU.Data;
 using ZIFEIYU.DataBase;
 using ZIFEIYU.Services;
 
@@ -26,7 +25,6 @@ public static class MauiProgram
 #if DEBUG
             services.AddBlazorWebViewDeveloperTools();
 #endif
-            services.AddSingleton<WeatherForecastService>();
             //services.AddSingleton(sp => new HttpClient { BaseAddress = new Uri("https://api.openai.com/v1") });
             services.AddSingleton<ChatGPTServices>();
             services.AddMudServices();
