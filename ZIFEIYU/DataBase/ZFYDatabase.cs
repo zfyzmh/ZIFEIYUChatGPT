@@ -22,7 +22,7 @@ namespace ZIFEIYU.DataBase
 
         public void Init()
         {
-            CreateTableResult result = Database.CreateTableAsync<Test>().Result;
+            CreateTablesResult result = Database.CreateTablesAsync(CreateFlags.AutoIncPK, typeof(MessageEntity), typeof(ChatEntity)).Result;
         }
 
         //public async Task<List<TodoItem>> GetItemsAsync()
