@@ -4,6 +4,12 @@ namespace ZIFEIYU.Model
 {
     public class DialogueMessage
     {
+        public DialogueMessage() { }
+        public DialogueMessage( string role)
+        {
+            Role=role;
+            Content = "";
+        }
         [JsonProperty("role")]
         public string Role { get; set; }
 
