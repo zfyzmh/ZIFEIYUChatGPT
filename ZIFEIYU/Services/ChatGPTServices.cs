@@ -19,7 +19,15 @@ namespace ZIFEIYU.Services
 
         public async Task<DialogueOutput> SendDialogue(DialogueInput dialogueInput)
         {
-            return await HttpHelper.HttpPostAsync<DialogueOutput>("https://api.openai.com/v1/chat/completions", JsonHelper.SerializeObject(dialogueInput), headers: Headers);
+            try
+            {
+                return await HttpHelper.HttpPostAsync<DialogueOutput>("https://api.openai.com/v1/chat/completions", JsonHelper.SerializeObject(dialogueInput), headers: Headers);
+            }
+            catch (Exception)
+            {
+
+                return new DialogueOutput();
+            }
         }
     }
 }
