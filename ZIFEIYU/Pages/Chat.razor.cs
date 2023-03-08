@@ -5,6 +5,8 @@ using System.Net;
 using ZIFEIYU.DataBase;
 using ZIFEIYU.Entity;
 using ZIFEIYU.Model;
+using ZIFEIYU.Model.Dto.InputDto;
+using ZIFEIYU.Model.Dto.OutDto;
 using ZIFEIYU.Services;
 
 namespace ZIFEIYU.Pages
@@ -31,12 +33,13 @@ namespace ZIFEIYU.Pages
         public List<DialogueMessage> Messages { get; set; } = new List<DialogueMessage>();
         public bool _processing = false;
 
+        protected override async Task OnInitializedAsync()
+        {
+            await base.OnInitializedAsync();
+        }
+
         public async Task Send()
         {
-            var web = new WebClient();
-            
-            web.OpenReadCompleted += Web_OpenReadCompleted;
-            web.OpenReadAsync(new Uri("http://localhost:21167/Test"));
             if (!string.IsNullOrWhiteSpace(HelperText))
             {
                 Messages.Add(new DialogueMessage() { Role = "user", Content = HelperText });
@@ -44,30 +47,22 @@ namespace ZIFEIYU.Pages
                 _processing = true;
                 StateHasChanged();
                 UpdateScroll("IndexBody");
-                DialogueOutput = await ChatGPTServices.SendDialogue(new DialogueInput(Messages));
-                Messages.Add(DialogueOutput.Choices[0].Message);
+                await ChatGPTServices.SendSSEDialogue(new DialogueInput(Messages), DialogEvent);
+                //Messages.Add(DialogueOutput.Choices[0].Message);
                 StateHasChanged();
                 UpdateScroll("IndexBody");
                 _processing = false;
             }
         }
 
-        private static void Web_OpenReadCompleted(object sender, OpenReadCompletedEventArgs e)
+        private void DialogEvent(object sender, List<DialogueMessage> e)
         {
-            using (var sr = new StreamReader(e.Result))
-            {
-                string line;
-                while ((line = sr.ReadLine()) != null)
-                {
-                    Console.WriteLine(line);
-                }
-            }
+            Messages = e;
+            StateHasChanged();
         }
 
         public async Task Test()
         {
-            await ZFYDatabase.Database.InsertAsync(new Test() { MyProperty = "测试" });
-            var aa = await ZFYDatabase.Database.Table<Test>().FirstAsync();
         }
 
         private void UpdateScroll(string id)

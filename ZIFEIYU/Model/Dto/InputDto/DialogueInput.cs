@@ -1,12 +1,17 @@
 ﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace ZIFEIYU.Model
+namespace ZIFEIYU.Model.Dto.InputDto
 {
     public class DialogueInput
     {
         public DialogueInput(List<DialogueMessage> messages)
         {
-            Model = "gpt-3.5-turbo";
+            Model = "gpt-3.5-turbo-0301";
             Messages = messages;
         }
 
@@ -44,7 +49,8 @@ namespace ZIFEIYU.Model
         /// 是否以流的形式接收
         /// </summary>
         [JsonProperty("stream")]
-        public bool? Stream { get; set; }= false;
+        public bool? Stream { get; set; } = false;
+
         /// <summary>
         /// Up to 4 sequences where the API will stop generating further tokens.
         /// </summary>
@@ -73,39 +79,6 @@ namespace ZIFEIYU.Model
         /// 唯一的用户id 可以帮助openai监控滥用行为
         /// </summary>
         [JsonProperty("user")]
-        public string? User { get; set; }
-    }
-
-    public class DialogueOutput
-    {
-        [JsonProperty("id")]
-        public string Id { get; set; }
-
-        [JsonProperty("object")]
-        public string Object { get; set; }
-
-        [JsonProperty("created")]
-        public int Created { get; set; }
-
-        [JsonProperty("model")]
-        public string Model { get; set; }
-
-        [JsonProperty("usage")]
-        public Usage Usage { get; set; }
-
-        [JsonProperty("choices")]
-        public Choice[] Choices { get; set; }
-    }
-
-    public class Choice
-    {
-        [JsonProperty("message")]
-        public DialogueMessage Message { get; set; }
-
-        [JsonProperty("finish_reason")]
-        public string FinishReason { get; set; }
-
-        [JsonProperty("index")]
-        public int Index { get; set; }
+        public string User { get; set; } = "";
     }
 }

@@ -61,7 +61,6 @@ namespace ZIFEIYU.util
 
                     HttpResponseMessage response = await client.PostAsync(url, httpContent);
 
-
                     return await response.Content.ReadAsStringAsync();
                 }
             }

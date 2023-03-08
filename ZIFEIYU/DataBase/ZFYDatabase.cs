@@ -1,4 +1,5 @@
 ﻿using SQLite;
+using System.Reflection;
 using ZIFEIYU.Entity;
 
 namespace ZIFEIYU.DataBase
@@ -22,7 +23,7 @@ namespace ZIFEIYU.DataBase
 
         public void Init()
         {
-            CreateTablesResult result = Database.CreateTablesAsync(CreateFlags.AutoIncPK, typeof(MessageEntity), typeof(ChatEntity)).Result;
+            CreateTablesResult result = Database.CreateTablesAsync(CreateFlags.AutoIncPK, Assembly.GetExecutingAssembly().GetTypes().Where(m => m.Namespace == "ZIFEIYU.Entity" & m.IsClass).ToArray()).Result;
         }
 
         //public async Task<List<TodoItem>> GetItemsAsync()
