@@ -2,16 +2,28 @@
 @using System.Diagnostics;
 @inherits ChatBase
 
-
 <div class="main">
     <div  id="IndexBody" class="body">
+        <div style="position:absolute;opacity:0.7">
+            <MudMenu  Dense="true" Icon="@Icons.Material.Outlined.AccessTime" Color="Color.Primary" Size="Size.Medium" ActivationEvent="@MouseEvent.MouseOver">
+                <ChildContent >
+                  
+                        <MudMenuItem >Profile</MudMenuItem>
+                    <MudMenuItem>Theme</MudMenuItem>
+                    <MudMenuItem>Usage</MudMenuItem>
+                    <MudMenuItem>Sign Out</MudMenuItem>
+                   
+                </ChildContent>
+            </MudMenu>
+        </div>
+        
         <Dialogue Messages="Messages"></Dialogue>
     </div>
     <div class="bottom">
         <div style="margin-right:5px;">
             <SpinLoader IsLoading="_processing">
                 <ContentTemplate>
-                    <MudFab OnClick="()=>{HelperText=String.Empty;}" Size="Size.Small" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Refresh" />
+                    <MudFab OnClick="Reset" Size="Size.Small" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Refresh" />
                 </ContentTemplate>
             </SpinLoader>
         </div>

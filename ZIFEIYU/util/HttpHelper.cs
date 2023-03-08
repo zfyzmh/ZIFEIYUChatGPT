@@ -27,7 +27,7 @@ namespace ZIFEIYU.util
                 {
                     if (contentType != null)
                         httpContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(contentType);
-                    
+
                     HttpResponseMessage response = client.PostAsync(url, httpContent).Result;
                     var code = ((int)response.StatusCode);
                     return response.Content.ReadAsStringAsync().Result;

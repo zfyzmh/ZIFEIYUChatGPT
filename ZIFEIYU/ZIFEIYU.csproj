@@ -38,7 +38,6 @@
         <GenerateTestArtifacts>True</GenerateTestArtifacts>
         <AppInstallerUri>D:\Test</AppInstallerUri>
         <HoursBetweenUpdateChecks>168000</HoursBetweenUpdateChecks>
-        <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0-android|AnyCPU'">
@@ -76,7 +75,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="BlazorPro.Spinkit" Version="1.2.0" />
+      <PackageReference Include="BlazorPro.Spinkit" Version="1.1.0" />
       <PackageReference Include="MudBlazor" Version="6.1.9" />
       <PackageReference Include="MudBlazor.Markdown" Version="0.1.0" />
       <PackageReference Include="MudBlazor.ThemeManager" Version="1.0.7" />

@@ -1,8 +1,8 @@
 ﻿.page {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    background-color: #272b33;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background-color: #282c34;
 }
 
 main {
@@ -35,6 +35,10 @@ main {
 .top-row ::deep a:first-child {
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.content {
+  height: 100vh;
 }
 
 @media (max-width: 640.98px) {

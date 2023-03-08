@@ -1,4 +1,5 @@
 ﻿using MudBlazor.Services;
+using ZIFEIYU.Dao;
 using ZIFEIYU.DataBase;
 using ZIFEIYU.Services;
 
@@ -29,6 +30,7 @@ public static class MauiProgram
             services.AddSingleton<ChatGPTServices>();
             services.AddMudServices();
             services.AddSingleton<ZFYDatabase>();
+            services.AddSingleton<ChatDao>();
         }
     }
 }

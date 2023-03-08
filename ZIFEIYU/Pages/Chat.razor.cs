@@ -8,6 +8,7 @@ using ZIFEIYU.Model;
 using ZIFEIYU.Model.Dto.InputDto;
 using ZIFEIYU.Model.Dto.OutDto;
 using ZIFEIYU.Services;
+using ZIFEIYU.util;
 
 namespace ZIFEIYU.Pages
 {
@@ -26,15 +27,34 @@ namespace ZIFEIYU.Pages
         [Inject]
         private IJSRuntime jsRuntime { get; set; }
 
+        public MudTheme _theme = new();
+        public bool _isDarkMode=true;
+
+        public string ChatTheme { get; set; }
+
         public string HelperText { get; set; }
 
         public DialogueOutput DialogueOutput { get; set; }
         public MudTextField<string> singleLineReference;
         public List<DialogueMessage> Messages { get; set; } = new List<DialogueMessage>();
+
+        /// <summary>
+        /// d
+        /// </summary>
+        public int ChatId { get; set; }
+
         public bool _processing = false;
 
         protected override async Task OnInitializedAsync()
         {
+            ChatEntity chat = await ChatGPTServices.GetChatCurrent();
+            if (chat != null)
+            {
+                ChatId = chat.Id;
+                ChatTheme = chat.Theme;
+                Messages = await JsonHelper.DeserializeJsonToListAsync<DialogueMessage>(chat.DialogJson);
+            }
+
             await base.OnInitializedAsync();
         }
 
@@ -52,9 +72,18 @@ namespace ZIFEIYU.Pages
                 StateHasChanged();
                 UpdateScroll("IndexBody");
                 _processing = false;
+
+                await ChatGPTServices.SaveChat(Messages, ChatId);
             }
         }
-
+        public async Task Reset()
+        {
+            HelperText=string.Empty;
+            ChatId = 0;
+            Messages = new List<DialogueMessage>();
+            StateHasChanged();
+        }
+        
         private void DialogEvent(object sender, List<DialogueMessage> e)
         {
             Messages = e;

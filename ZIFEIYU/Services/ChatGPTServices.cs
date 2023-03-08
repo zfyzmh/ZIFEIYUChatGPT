@@ -7,6 +7,9 @@ using ZIFEIYU.Model;
 using ZIFEIYU.util;
 using ZIFEIYU.Model.Dto.InputDto;
 using ZIFEIYU.Model.Dto.OutDto;
+using ZIFEIYU.Dao;
+using SQLite;
+using ZIFEIYU.Entity;
 
 namespace ZIFEIYU.Services
 {
@@ -16,15 +19,26 @@ namespace ZIFEIYU.Services
 
         public event EventHandler<List<DialogueMessage>> StartPublishPaper;
 
-        public ChatGPTServices()
+        private readonly ChatDao _dao;
+
+        public ChatGPTServices(ChatDao dao)
         {
-            // Headers.Add("Authorization", "Bearer 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");
+            _dao = dao;
             Headers.Add("Authorization", "Bearer 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");
         }
 
         public async Task<DavinciOutput> GetDavinci(DavinciInput davinciInput)
         {
             return await HttpHelper.HttpPostAsync<DavinciOutput>("https://api.openai.com/v1/completions", JsonHelper.SerializeObject(davinciInput), headers: Headers);
+        }
+
+        /*JsonHelper.DeserializeJsonToList<DialogueMessage>(chat.DialogJson);
+
+            */
+
+        public async Task<ChatEntity> GetChatCurrent()
+        {
+            return await _dao.GetChatCurrent();
         }
 
         public async Task<DialogueOutput> SendDialogue(DialogueInput dialogueInput)
@@ -39,6 +53,16 @@ namespace ZIFEIYU.Services
             }
         }
 
+        public async Task SaveChat(List<DialogueMessage> messages, int id)
+        {
+            ChatEntity chatEntity = new ChatEntity();
+            chatEntity.UpdateDate = DateTime.Now;
+            chatEntity.Id = id;
+            chatEntity.DialogJson = JsonHelper.SerializeObject(messages);
+            chatEntity.Theme ??= messages.First().Content;
+            await _dao.SaveChat(chatEntity);
+        }
+
         public async Task SendSSEDialogue(DialogueInput dialogueInput, EventHandler<List<DialogueMessage>> eventHandler)
         {
             int speed = 70;
@@ -49,7 +73,7 @@ namespace ZIFEIYU.Services
             dialogueInput.Stream = true;
             using (HttpClient client = new HttpClient())
             {
-                client.Timeout = new TimeSpan(0, 0, 30);
+                client.Timeout = new TimeSpan(0, 0, 15);
 
                 client.DefaultRequestHeaders.Add("Authorization", "Bearer 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");
                 using (HttpContent httpContent = new StringContent(JsonHelper.SerializeObject(dialogueInput), Encoding.UTF8))
@@ -60,10 +84,11 @@ namespace ZIFEIYU.Services
 
                     if (response.IsSuccessStatusCode)
                     {
+                        bool close = true;
                         using (Stream Stream = response.Content.ReadAsStream())
                         {
                             StreamReader streamReader = new StreamReader(Stream);
-                            while (true)
+                            while (close)
                             {
                                 var str = streamReader.ReadLine();
                                 if (!string.IsNullOrEmpty(str))
@@ -77,11 +102,14 @@ namespace ZIFEIYU.Services
                                         diastr += dia.Choices[0].Delta.Content;
                                         message.Content = diastr;
                                         eventHandler.Invoke(this, dialogueInput.Messages);
-                                        await Task.Delay(speed--);
+                                        if (speed > 0)
+                                        {
+                                            await Task.Delay(speed--);
+                                        }
                                     }
-                                    if (dia.Choices[0].FinishReason != null)
+                                    if (dia.Choices[0].FinishReason == "stop")
                                     {
-                                        return;
+                                        close = false;
                                     }
                                 }
                             }

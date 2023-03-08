@@ -38,6 +38,18 @@ namespace ZIFEIYU.util
             return list;
         }
 
+        public static async Task<List<T>> DeserializeJsonToListAsync<T>(string json) where T : class
+        {
+            return await Task.Run(() =>
+            {
+                JsonSerializer serializer = new();
+                StringReader sr = new StringReader(json);
+                object o = serializer.Deserialize(new JsonTextReader(sr), typeof(List<T>));
+                List<T> list = o as List<T>;
+                return list;
+            });
+        }
+
         /// <summary>
         /// 反序列化JSON到给定的匿名对象.
         /// </summary>
