@@ -9,7 +9,7 @@ namespace ZIFEIYU.Entity
     public class ChatEntity
     {
         [PrimaryKey, AutoIncrement]
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         /// <summary>
         /// 对话主题,默认为第一句话

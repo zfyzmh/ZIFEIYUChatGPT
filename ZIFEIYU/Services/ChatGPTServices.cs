@@ -53,7 +53,7 @@ namespace ZIFEIYU.Services
             }
         }
 
-        public async Task SaveChat(List<DialogueMessage> messages, int id)
+        public async Task SaveChat(List<DialogueMessage> messages, long id)
         {
             ChatEntity chatEntity = new ChatEntity();
             chatEntity.UpdateDate = DateTime.Now;
@@ -65,7 +65,7 @@ namespace ZIFEIYU.Services
 
         public async Task SendSSEDialogue(DialogueInput dialogueInput, EventHandler<List<DialogueMessage>> eventHandler)
         {
-            int speed = 70;
+            int speed = 100;
             string diastr = "";
             DialogueMessage message = new DialogueMessage("assistant");
             dialogueInput.Messages.Add(message);
@@ -73,7 +73,7 @@ namespace ZIFEIYU.Services
             dialogueInput.Stream = true;
             using (HttpClient client = new HttpClient())
             {
-                client.Timeout = new TimeSpan(0, 0, 15);
+                client.Timeout = TimeSpan.FromSeconds(15);
 
                 client.DefaultRequestHeaders.Add("Authorization", "Bearer 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");
                 using (HttpContent httpContent = new StringContent(JsonHelper.SerializeObject(dialogueInput), Encoding.UTF8))
@@ -114,6 +114,9 @@ namespace ZIFEIYU.Services
                                 }
                             }
                         }
+                    }
+                    else
+                    {
                     }
                 }
             }

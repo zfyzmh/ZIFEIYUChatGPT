@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using MudBlazor;
-using System.Net;
 using ZIFEIYU.DataBase;
 using ZIFEIYU.Entity;
 using ZIFEIYU.Model;
@@ -12,9 +11,9 @@ using ZIFEIYU.util;
 
 namespace ZIFEIYU.Pages
 {
-    public class ChatBase : ComponentBase
+    public partial class Chat
     {
-        public ChatBase()
+        public Chat()
         {
         }
 
@@ -41,7 +40,7 @@ namespace ZIFEIYU.Pages
         /// <summary>
         /// d
         /// </summary>
-        public int ChatId { get; set; }
+        public long ChatId { get; set; }
 
         public bool _processing = false;
 
@@ -58,6 +57,12 @@ namespace ZIFEIYU.Pages
             await base.OnInitializedAsync();
         }
 
+        protected override Task OnAfterRenderAsync(bool firstRender)
+        {
+            UpdateScroll("IndexBody");
+            return base.OnAfterRenderAsync(firstRender);
+        }
+
         public async Task Send()
         {
             if (!string.IsNullOrWhiteSpace(HelperText))
@@ -66,13 +71,10 @@ namespace ZIFEIYU.Pages
                 HelperText = "";
                 _processing = true;
                 StateHasChanged();
-                UpdateScroll("IndexBody");
                 await ChatGPTServices.SendSSEDialogue(new DialogueInput(Messages), DialogEvent);
                 //Messages.Add(DialogueOutput.Choices[0].Message);
                 StateHasChanged();
-                UpdateScroll("IndexBody");
                 _processing = false;
-
                 await ChatGPTServices.SaveChat(Messages, ChatId);
             }
         }

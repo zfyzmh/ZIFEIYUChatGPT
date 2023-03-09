@@ -1,4 +1,5 @@
 ﻿using MudBlazor.Services;
+using System.Runtime.ExceptionServices;
 using ZIFEIYU.Dao;
 using ZIFEIYU.DataBase;
 using ZIFEIYU.Services;
@@ -17,7 +18,10 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
             });
         ConfigureServices(builder.Services);
-        builder.Services.BuildServiceProvider().GetService<ZFYDatabase>().Init();
+        Common.ServiceProvider = builder.Services.BuildServiceProvider();
+        Common.ServiceProvider.GetService<ZFYDatabase>()!.Init();
+        AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+        AppDomain.CurrentDomain.FirstChanceException += OnFirstChanceException;
         return builder.Build();
 
         void ConfigureServices(IServiceCollection services)
@@ -32,5 +36,16 @@ public static class MauiProgram
             services.AddSingleton<ZFYDatabase>();
             services.AddSingleton<ChatDao>();
         }
+    }
+
+    private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+    {
+        Exception exception = (Exception)e.ExceptionObject;
+        Common.ServiceProvider.GetService<ZFYDatabase>().ErrorLog(exception);
+    }
+
+    private static void OnFirstChanceException(object? sender, FirstChanceExceptionEventArgs e)
+    {
+        Common.ServiceProvider.GetService<ZFYDatabase>().ErrorLog(e.Exception);
     }
 }
