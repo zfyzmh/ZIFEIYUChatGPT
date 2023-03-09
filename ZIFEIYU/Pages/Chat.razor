@@ -1,5 +1,7 @@
-﻿@page "/"
+﻿@page "/chat"
+@page "/"
 @using System.Diagnostics;
+@using BlazorPro.Spinkit;
 @inherits ChatBase
 
 <div class="main">
@@ -22,6 +24,9 @@
     <div class="bottom">
         <div style="margin-right:5px;">
             <SpinLoader IsLoading="_processing">
+                <LoadingTemplate>
+                    <Wave Color="#776be7" Center="true" />
+                </LoadingTemplate>
                 <ContentTemplate>
                     <MudFab OnClick="Reset" Size="Size.Small" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Refresh" />
                 </ContentTemplate>

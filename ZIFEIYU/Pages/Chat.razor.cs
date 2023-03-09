@@ -28,7 +28,7 @@ namespace ZIFEIYU.Pages
         private IJSRuntime jsRuntime { get; set; }
 
         public MudTheme _theme = new();
-        public bool _isDarkMode=true;
+        public bool _isDarkMode = true;
 
         public string ChatTheme { get; set; }
 
@@ -76,14 +76,15 @@ namespace ZIFEIYU.Pages
                 await ChatGPTServices.SaveChat(Messages, ChatId);
             }
         }
+
         public async Task Reset()
         {
-            HelperText=string.Empty;
+            HelperText = string.Empty;
             ChatId = 0;
             Messages = new List<DialogueMessage>();
             StateHasChanged();
         }
-        
+
         private void DialogEvent(object sender, List<DialogueMessage> e)
         {
             Messages = e;

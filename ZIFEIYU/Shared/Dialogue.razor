@@ -4,21 +4,30 @@
 {
     @if (item.Role!="user")
     {
-        <div class="alert alert-secondary mt-4 message">
-            <strong>@item.Content</strong>
-            <span class="bi bi-android2" aria-hidden="true"></span>
+        <div style="display:flex;   ">
+            <div style=" margin-bottom: 10px; padding: 10px; max-width: 80%">
+                <MudCard>
+                    <MudCardContent>
+                        <MudText>@item.Content</MudText>
+                    </MudCardContent>
+                </MudCard>
+            </div>
+           
         </div>
     }
     else
     {
         <div style="display:flex;" dir="rtl">
-            <div class="alert alert-secondary mt-4 message " style=" display:flex; display:inline-block;" dir="rtl">
-                <span class="bi bi-airplane-fill" aria-hidden="true"></span>
-                <strong>@item.Content</strong>
+            <div style=" margin-bottom: 10px; padding: 10px; max-width: 80%">
+                <MudCard>
+                    <MudCardContent>
+                        <MudText>@item.Content</MudText>
+                    </MudCardContent>
+                </MudCard>
             </div>
+          
         </div>
     }
-
 }
 
 @code {

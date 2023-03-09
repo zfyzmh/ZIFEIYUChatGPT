@@ -1,8 +1,6 @@
 ﻿.message {
   margin-top: 0;
   padding: 10px;
-  display: flex;
-  display: inline-block;
   max-width: 80%;
   color: #7767ff;
   border-color: rgba(13, 110, 253, 0.25);
@@ -12,23 +10,17 @@
 .alert {
   margin-top: 0;
   padding: 10px;
-  display: flex;
-  display: inline-block;
   max-width: 80%;
 }
 
 .alert-secondary {
   margin-top: 0;
   padding: 10px;
-  display: flex;
-  display: inline-block;
   max-width: 80%;
 }
 
 .mt-4 {
   margin-top: 0;
   padding: 10px;
-  display: flex;
-  display: inline-block;
   max-width: 80%;
 }
