@@ -1,4 +1,5 @@
 ﻿using MudBlazor.Services;
+using System.Reflection;
 using System.Runtime.ExceptionServices;
 using ZIFEIYU.Dao;
 using ZIFEIYU.DataBase;
@@ -30,22 +31,24 @@ public static class MauiProgram
 #if DEBUG
             services.AddBlazorWebViewDeveloperTools();
 #endif
-            //services.AddSingleton(sp => new HttpClient { BaseAddress = new Uri("https://api.openai.com/v1") });
-            services.AddSingleton<ChatGPTServices>();
+
             services.AddMudServices();
             services.AddSingleton<ZFYDatabase>();
             services.AddSingleton<ChatDao>();
+            //批量注入服务
+            var servicesTypes = Assembly.GetExecutingAssembly().GetTypes().Where(m => m.Namespace == "ZIFEIYU.Services" & m.IsClass & m.IsVisible).ToArray();
+            foreach (var servicesType in servicesTypes) { services.AddSingleton(servicesType); }
         }
     }
 
     private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
     {
         Exception exception = (Exception)e.ExceptionObject;
-        Common.ServiceProvider.GetService<ZFYDatabase>().ErrorLog(exception);
+        Common.ServiceProvider.GetService<ZFYDatabase>()!.ErrorLog(exception);
     }
 
     private static void OnFirstChanceException(object? sender, FirstChanceExceptionEventArgs e)
     {
-        Common.ServiceProvider.GetService<ZFYDatabase>().ErrorLog(e.Exception);
+        Common.ServiceProvider.GetService<ZFYDatabase>()!.ErrorLog(e.Exception);
     }
 }

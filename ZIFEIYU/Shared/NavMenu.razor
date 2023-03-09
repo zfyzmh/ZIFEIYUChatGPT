@@ -1,9 +1,19 @@
 ﻿<div class="appBar">
-	<MudAppBar Color="Color.Primary" Fixed="false">
-		<MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" />
-		<MudSpacer />
-		<MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" />
-	</MudAppBar>
+    <MudAppBar>
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
+        <MudSpacer />
+        <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/MudBlazor/MudBlazor" Target="_blank" />
+    </MudAppBar>
+    <MudDrawer @bind-Open="@open" >
+        <MudDrawerHeader>
+            <MudText Typo="Typo.h6">My App</MudText>
+        </MudDrawerHeader>
+        <MudNavMenu>
+            <MudNavLink Icon="@Icons.Material.Filled.Dashboard" Href="/chat">聊天</MudNavLink>
+            <MudNavLink Icon="@Icons.Material.Filled.Dashboard" Href="/Quiz">提问</MudNavLink>
+            <MudNavLink Icon="@Icons.Material.Filled.Dashboard" Href="/billing" Disabled="true">Billing</MudNavLink>
+        </MudNavMenu>
+    </MudDrawer>
 </div>
 
 <div class="webMenu">
@@ -13,34 +23,24 @@
 			<MudText Typo="Typo.body2" Class="px-4 mud-text-secondary">version:0.01</MudText>
         <MudDivider Class="my-2"/>
 			<MudNavLink Icon="@Icons.Material.Filled.Dashboard" Href="/chat">聊天</MudNavLink>
-			<MudNavLink Href="/Quiz">提问</MudNavLink>
-			<MudNavLink Icon="@Icons.Material.Filled.Dashboard" Href="/billing" Disabled="true">Billing</MudNavLink>
-			<MudNavGroup Icon="@Icons.Material.Filled.Dashboard" Title="设置" Expanded="true">
+			<MudNavLink Icon="@Icons.Material.Filled.Dashboard" Href="/Quiz">提问</MudNavLink>
+            <MudNavLink Icon="@Icons.Material.Filled.Dashboard" Href="/Setting">设置</MudNavLink>
+			@*<MudNavGroup Icon="@Icons.Material.Filled.Dashboard" Title="设置" Expanded="true">
 				<MudNavLink Icon="@Icons.Material.Filled.Dashboard" Href="/Setting">Users</MudNavLink>
 				<MudNavLink Icon="@Icons.Material.Filled.Dashboard" Href="/Setting">Security</MudNavLink>
-        </MudNavGroup>
+        </MudNavGroup>*@
         <MudNavLink Href="/about">关于</MudNavLink>
     </MudNavMenu>
 </MudPaper>
-	@*<nav class="flex-column">
-		<div class="nav-item px-3">
-			<NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-				<span class="oi oi-home" aria-hidden="true"></span> 聊天
-			</NavLink>
-		</div>
-		<div class="nav-item px-3">
-			<NavLink class="nav-link" href="Quiz">
-				<span class="oi oi-plus" aria-hidden="true"></span> 提问
-			</NavLink>
-		</div>
-		<div class="nav-item px-3">
-			<NavLink class="nav-link" href="Setting">
-				<span class="oi oi-list-rich" aria-hidden="true"></span> 设置
-			</NavLink>
-		</div>
-	</nav>*@
+    <MudDrawer @bind-Open="@open" Anchor="@anchor" Elevation="1" Variant="@DrawerVariant.Temporary">
+        <MudDrawerHeader>
+            <MudText Typo="Typo.h6">子非鱼的应用</MudText>
+        </MudDrawerHeader>
+        <MudNavMenu>
+            <MudNavLink Icon="@Icons.Material.Filled.Dashboard" Href="/chat">聊天</MudNavLink>
+            <MudNavLink Icon="@Icons.Material.Filled.Dashboard" Href="/Quiz">提问</MudNavLink>
+            <MudNavLink Icon="@Icons.Material.Filled.Dashboard" Href="/Setting">设置</MudNavLink>
+        </MudNavMenu>
+    </MudDrawer>
 </div>
 
-@code {
-	
-}

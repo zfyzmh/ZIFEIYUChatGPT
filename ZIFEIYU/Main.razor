@@ -13,8 +13,3 @@
 <MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" Theme="_theme" /> />
 <MudDialogProvider />
 <MudSnackbarProvider />
-@code{
-	private MudThemeProvider _mudThemeProvider;
-	private MudTheme _theme = new();
-	private bool _isDarkMode=true;
-}

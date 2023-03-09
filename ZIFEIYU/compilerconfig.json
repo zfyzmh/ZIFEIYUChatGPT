@@ -14,5 +14,13 @@
   {
     "outputFile": "Pages/Counter.razor.css",
     "inputFile": "Pages/Counter.razor.scss"
+  },
+  {
+    "outputFile": "Pages/Chat.razor.css",
+    "inputFile": "Pages/Chat.razor.scss"
+  },
+  {
+    "outputFile": "Pages/Quiz.razor.css",
+    "inputFile": "Pages/Quiz.razor.scss"
   }
 ]

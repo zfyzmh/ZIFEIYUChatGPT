@@ -3,11 +3,10 @@
     display: grid;
     grid-template-columns: auto;
     grid-template-rows: 1fr 120px;
-    background-color: #15151f;
+    margin-top: 3rem;
 
     .body {
         overflow-y: scroll;
-        color: #7767ff;
 
         &::-webkit-scrollbar {
             display: none; /* Chrome Safari */
@@ -17,11 +16,14 @@
     .bottom {
         display: flex;
         justify-content: center;
-        align-items: center;
+        align-items: end;
+        padding-bottom: 1.5rem;
     }
 }
+
 @media (min-width: 641px) {
     .main {
+        margin-top: 0;
         height: 100vh;
         display: grid;
         grid-template-columns: auto;
@@ -35,6 +37,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            padding-bottom: 0;
         }
     }
 }

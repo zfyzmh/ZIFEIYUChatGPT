@@ -22,9 +22,11 @@ namespace ZIFEIYU.DataBase
         {
         }
 
-        public void Init()
+        public async void Init()
         {
-            CreateTablesResult result = Database.CreateTablesAsync(CreateFlags.AutoIncPK, Assembly.GetExecutingAssembly().GetTypes().Where(m => m.Namespace == "ZIFEIYU.Entity" & m.IsClass).ToArray()).Result;
+            _ = Database.CreateTablesAsync(CreateFlags.AutoIncPK, Assembly.GetExecutingAssembly().GetTypes().Where(m => m.Namespace == "ZIFEIYU.Entity" & m.IsClass).ToArray()).Result;
+            if (await Database.Table<UserConfig>().CountAsync() == 0)
+            { await Database.InsertAsync(new UserConfig() { IsDarkMode = 0, UserId = 0 }); }
         }
 
         public void ErrorLog(Exception exception)
