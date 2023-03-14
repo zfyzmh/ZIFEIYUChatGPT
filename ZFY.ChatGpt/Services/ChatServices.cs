@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
 using ZFY.ChatGpt.Dto;
@@ -43,7 +44,7 @@ namespace ZFY.ChatGpt.Services
                                 {
                                     str = str.Remove(0, str.IndexOf('{'));
 
-                                    var dia = JsonHelper.DeserializeJsonToObject<OutChat>(str);
+                                    var dia = JsonHelper.DeserializeJsonToObject<OutChatSSE>(str);
 
                                     if (!string.IsNullOrEmpty(dia.Choices[0].Delta.Content))
                                     {
@@ -69,5 +70,17 @@ namespace ZFY.ChatGpt.Services
                 }
             }
         }
+
+        /*public async Task<OutChat> SendDialogue(InChat chatInput)
+        {
+            try
+            {
+                return await HttpHelper.HttpPostAsync<OutChat>("https://api.openai.com/v1/chat/completions", JsonHelper.SerializeObject(chatInput), headers: Headers);
+            }
+            catch (Exception)
+            {
+                return new DialogueOutput();
+            }
+        }*/
     }
 }
