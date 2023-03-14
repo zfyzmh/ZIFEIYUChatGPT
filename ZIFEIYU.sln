@@ -4,6 +4,8 @@ VisualStudioVersion = 17.0.31611.283
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZIFEIYU", "ZIFEIYU\ZIFEIYU.csproj", "{A8AB1314-34E9-406C-AD89-9C269E4D6EAE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZFY.ChatGpt", "ZFY.ChatGpt\ZFY.ChatGpt.csproj", "{73EBA1C8-5E30-4CE7-9244-7A827E93BD77}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -16,6 +18,10 @@ Global
 		{A8AB1314-34E9-406C-AD89-9C269E4D6EAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A8AB1314-34E9-406C-AD89-9C269E4D6EAE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A8AB1314-34E9-406C-AD89-9C269E4D6EAE}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{73EBA1C8-5E30-4CE7-9244-7A827E93BD77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73EBA1C8-5E30-4CE7-9244-7A827E93BD77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73EBA1C8-5E30-4CE7-9244-7A827E93BD77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73EBA1C8-5E30-4CE7-9244-7A827E93BD77}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

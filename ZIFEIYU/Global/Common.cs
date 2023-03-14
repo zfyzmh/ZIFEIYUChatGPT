@@ -10,7 +10,6 @@ namespace ZIFEIYU
     {
         private static ServiceProvider serviceProvider;
 
-
         public static ServiceProvider ServiceProvider
         {
             get { return serviceProvider; }
