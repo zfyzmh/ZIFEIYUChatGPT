@@ -16,14 +16,16 @@ namespace ZFY.ChatGpt
     {
         public static IServiceCollection AddChatGPT(this IServiceCollection services)
         {
-            services.AddSingleton<ChatServices>();
             services.AddHttpClient("ChatGPT", config =>
             {
                 config.BaseAddress = new Uri("https://api.openai.com");
+                config.DefaultRequestHeaders.Add("Accept", "application/json");
+                config.DefaultRequestHeaders.Add("Authorization", $"Bearer {Constants.ApiKey}");
                 //config.DefaultRequestHeaders.Add("header_1", "header_1");
-            }).AddHttpMessageHandler<ChatHttpHandler>()
+            });//.AddHttpMessageHandler<ChatHttpHandler>();
+            services.AddSingleton<OpenAiHttpClientFactory>();
+            services.AddSingleton<ChatServices>();
 
-            ;
             return services;
         }
 

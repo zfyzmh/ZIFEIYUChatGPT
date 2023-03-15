@@ -77,8 +77,6 @@
 
     <ItemGroup>
       <PackageReference Include="BlazorPro.Spinkit" Version="1.2.0" />
-      <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
-      <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
       <PackageReference Include="MudBlazor" Version="6.1.9" />
       <PackageReference Include="MudBlazor.Markdown" Version="0.1.0" />
       <PackageReference Include="MudBlazor.ThemeManager" Version="1.0.7" />
@@ -89,6 +87,12 @@
 
     <ItemGroup>
       <ProjectReference Include="..\ZFY.ChatGpt\ZFY.ChatGpt.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Update="wwwroot\index.js">
+        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>

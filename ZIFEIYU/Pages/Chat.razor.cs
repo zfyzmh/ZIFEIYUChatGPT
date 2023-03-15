@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using MudBlazor;
 using ZFY.ChatGpt.Dto;
 using ZFY.ChatGpt.Dto.InputDto;
@@ -8,6 +9,7 @@ using ZIFEIYU.Entity;
 using ZIFEIYU.Global;
 using ZIFEIYU.Services;
 using ZIFEIYU.util;
+using static MudBlazor.CategoryTypes;
 
 namespace ZIFEIYU.Pages
 {
@@ -24,6 +26,9 @@ namespace ZIFEIYU.Pages
 
         [Inject]
         public JsCommon JsCommon { get; set; }
+
+        [Inject]
+        public IJSRuntime jSRuntime { get; set; }
 
         [Inject]
         public ZFYDatabase ZFYDatabase { get; set; }
@@ -59,7 +64,8 @@ namespace ZIFEIYU.Pages
 
         protected override Task OnAfterRenderAsync(bool firstRender)
         {
-            JsCommon.UpdateScroll("IndexBody");
+            //JsCommon.UpdateScroll("IndexBody");
+            jSRuntime.InvokeAsync<Task>("updateScroll", "IndexBody");
             return base.OnAfterRenderAsync(firstRender);
         }
 
@@ -71,7 +77,7 @@ namespace ZIFEIYU.Pages
                 HelperText = "";
                 _processing = true;
                 StateHasChanged();
-                await ChatGPTServices.SendSSEDialogue(new InChat(Messages), DialogEvent);
+                await ChatGPTServices.SendSSEChat(new InChat(Messages), DialogEvent);
                 //Messages.Add(DialogueOutput.Choices[0].Message);
                 StateHasChanged();
                 _processing = false;
@@ -95,6 +101,7 @@ namespace ZIFEIYU.Pages
 
         public async Task Test()
         {
+            await jSRuntime.InvokeVoidAsync("displayTickerAlert1", "111", 2222);
         }
 
         /*public async Task KeyDown(KeyboardEventArgs keyboardEventArgs)

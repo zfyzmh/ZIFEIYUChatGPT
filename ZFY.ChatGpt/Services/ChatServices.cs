@@ -6,15 +6,28 @@ using ZFY.ChatGpt.Dto.OutDto;
 
 namespace ZFY.ChatGpt.Services
 {
+    /// <summary>
+    /// chat对话服务
+    /// </summary>
     public class ChatServices
     {
         private readonly OpenAiHttpClientFactory _httpClientFactory;
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="httpClientFactory"></param>
         public ChatServices(OpenAiHttpClientFactory httpClientFactory)
         {
             this._httpClientFactory = httpClientFactory;
         }
 
+        /// <summary>
+        /// 发送sse请求,即逐字回复版,但有可能连接成功但回复时间超长,不建议使用
+        /// </summary>
+        /// <param name="chatInput"></param>
+        /// <param name="eventHandler"></param>
+        /// <returns></returns>
         public async Task SendSSEChat(InChat chatInput, EventHandler<List<ChatMessage>> eventHandler)
         {
             int speed = 100;

@@ -15,6 +15,7 @@ namespace ZIFEIYU.Services
         public event EventHandler<List<ChatMessage>> StartPublishPaper;
 
         private readonly ChatDao _dao;
+        private readonly ChatServices chatServices;
 
         public ChatGPTServices(ChatDao dao, ChatServices chatServices)
         {
@@ -23,16 +24,10 @@ namespace ZIFEIYU.Services
             Headers.Add("Authorization", "Bearer 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");
         }
 
-        private ChatServices chatServices;
-
         public async Task<OutChat> GetDavinci(DavinciInput davinciInput)
         {
             return await HttpHelper.HttpPostAsync<OutChat>("https://api.openai.com/v1/completions", JsonHelper.SerializeObject(davinciInput), headers: Headers);
         }
-
-        /*JsonHelper.DeserializeJsonToList<DialogueMessage>(chat.DialogJson);
-
-            */
 
         public async Task<ChatEntity> GetChatCurrent()
         {
@@ -49,7 +44,7 @@ namespace ZIFEIYU.Services
             await _dao.SaveChat(chatEntity);
         }
 
-        public async Task SendSSEDialogue(InChat dialogueInput, EventHandler<List<ChatMessage>> eventHandler)
+        public async Task SendSSEChat(InChat dialogueInput, EventHandler<List<ChatMessage>> eventHandler)
         {
             await chatServices.SendSSEChat(dialogueInput, eventHandler);
         }
