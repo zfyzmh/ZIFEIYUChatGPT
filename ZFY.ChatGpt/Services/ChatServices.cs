@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.PortableExecutable;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using ZFY.ChatGpt.Dto;
 using ZFY.ChatGpt.Dto.InputDto;
 using ZFY.ChatGpt.Dto.OutDto;
@@ -12,6 +7,13 @@ namespace ZFY.ChatGpt.Services
 {
     public class ChatServices
     {
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public ChatServices(IHttpClientFactory httpClientFactory)
+        {
+            this._httpClientFactory = httpClientFactory;
+        }
+
         public async Task SendSSEChat(InChat chatInput, EventHandler<List<ChatMessage>> eventHandler)
         {
             int speed = 100;
@@ -20,52 +22,47 @@ namespace ZFY.ChatGpt.Services
             chatInput.Messages.Add(message);
 
             chatInput.Stream = true;
-            using (HttpClient client = new HttpClient())
+            HttpClient client = _httpClientFactory.CreateClient();
+            client.Timeout = TimeSpan.FromSeconds(15);
+
+            client.DefaultRequestHeaders.Add("Authorization", "Bearer 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");
+            using (HttpContent httpContent = new StringContent(JsonHelper.SerializeObject(chatInput), Encoding.UTF8))
             {
-                client.Timeout = TimeSpan.FromSeconds(15);
+                httpContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
 
-                client.DefaultRequestHeaders.Add("Authorization", "Bearer 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");
-                using (HttpContent httpContent = new StringContent(JsonHelper.SerializeObject(chatInput), Encoding.UTF8))
+                HttpResponseMessage response = await client.PostAsync("https://api.openai.com/v1/chat/completions", httpContent);
+
+                if (response.IsSuccessStatusCode)
                 {
-                    httpContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
-
-                    HttpResponseMessage response = await client.PostAsync("https://api.openai.com/v1/chat/completions", httpContent);
-
-                    if (response.IsSuccessStatusCode)
+                    bool close = true;
+                    using (Stream Stream = response.Content.ReadAsStream())
                     {
-                        bool close = true;
-                        using (Stream Stream = response.Content.ReadAsStream())
+                        StreamReader streamReader = new StreamReader(Stream);
+                        while (close)
                         {
-                            StreamReader streamReader = new StreamReader(Stream);
-                            while (close)
+                            var str = streamReader.ReadLine();
+                            if (!string.IsNullOrEmpty(str))
                             {
-                                var str = streamReader.ReadLine();
-                                if (!string.IsNullOrEmpty(str))
+                                str = str.Remove(0, str.IndexOf('{'));
+
+                                var dia = JsonHelper.DeserializeJsonToObject<OutChatSSE>(str);
+
+                                if (!string.IsNullOrEmpty(dia.Choices[0].Delta.Content))
                                 {
-                                    str = str.Remove(0, str.IndexOf('{'));
-
-                                    var dia = JsonHelper.DeserializeJsonToObject<OutChatSSE>(str);
-
-                                    if (!string.IsNullOrEmpty(dia.Choices[0].Delta.Content))
+                                    diastr += dia.Choices[0].Delta.Content;
+                                    message.Content = diastr;
+                                    eventHandler.Invoke(this, chatInput.Messages);
+                                    if (speed > 0)
                                     {
-                                        diastr += dia.Choices[0].Delta.Content;
-                                        message.Content = diastr;
-                                        eventHandler.Invoke(this, chatInput.Messages);
-                                        if (speed > 0)
-                                        {
-                                            await Task.Delay(speed--);
-                                        }
+                                        await Task.Delay(speed--);
                                     }
-                                    if (dia.Choices[0].FinishReason == "stop")
-                                    {
-                                        close = false;
-                                    }
+                                }
+                                if (dia.Choices[0].FinishReason == "stop")
+                                {
+                                    close = false;
                                 }
                             }
                         }
-                    }
-                    else
-                    {
                     }
                 }
             }

@@ -1,5 +1,5 @@
-﻿@using ZIFEIYU.Global;
-@using ZIFEIYU.Model;
+﻿@using ZFY.ChatGpt.Dto;
+@using ZIFEIYU.Global;
 
 @foreach (var item in Messages)
 {
@@ -34,7 +34,7 @@
 
 @code {
     [Parameter]
-    public List<DialogueMessage> Messages { get; set; }
+    public List<ChatMessage> Messages { get; set; }
 
     public CodeBlockTheme CodeBlockTheme { get {
             if ((bool)EventDispatcher.DispatchFunc("IsDarkTheme")) return CodeBlockTheme.Dark;

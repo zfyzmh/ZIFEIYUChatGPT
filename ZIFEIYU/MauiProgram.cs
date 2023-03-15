@@ -1,8 +1,10 @@
 ﻿using MudBlazor.Services;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
+using ZFY.ChatGpt.Services;
 using ZIFEIYU.Dao;
 using ZIFEIYU.DataBase;
+using ZIFEIYU.Global;
 using ZIFEIYU.Services;
 
 namespace ZIFEIYU;
@@ -27,6 +29,7 @@ public static class MauiProgram
 
         void ConfigureServices(IServiceCollection services)
         {
+            services.AddHttpClient();
             services.AddMauiBlazorWebView();
 #if DEBUG
             services.AddBlazorWebViewDeveloperTools();
@@ -35,8 +38,11 @@ public static class MauiProgram
             services.AddMudServices();
             services.AddSingleton<ZFYDatabase>();
             services.AddSingleton<ChatDao>();
+            services.AddSingleton<JsCommon>();
             //批量注入服务
             var servicesTypes = Assembly.GetExecutingAssembly().GetTypes().Where(m => m.Namespace == "ZIFEIYU.Services" & m.IsClass & m.IsVisible).ToArray();
+
+            services.AddSingleton<ChatServices>();
             foreach (var servicesType in servicesTypes) { services.AddSingleton(servicesType); }
         }
     }

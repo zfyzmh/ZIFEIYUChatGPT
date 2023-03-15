@@ -77,12 +77,18 @@
 
     <ItemGroup>
       <PackageReference Include="BlazorPro.Spinkit" Version="1.2.0" />
+      <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
       <PackageReference Include="MudBlazor" Version="6.1.9" />
       <PackageReference Include="MudBlazor.Markdown" Version="0.1.0" />
       <PackageReference Include="MudBlazor.ThemeManager" Version="1.0.7" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
       <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
       <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.4" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\ZFY.ChatGpt\ZFY.ChatGpt.csproj" />
     </ItemGroup>
 
 </Project>

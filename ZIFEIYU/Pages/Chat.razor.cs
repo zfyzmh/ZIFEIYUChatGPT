@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using MudBlazor;
+using ZFY.ChatGpt.Dto;
+using ZFY.ChatGpt.Dto.InputDto;
+using ZFY.ChatGpt.Dto.OutDto;
 using ZIFEIYU.DataBase;
 using ZIFEIYU.Entity;
-using ZIFEIYU.Model;
-using ZIFEIYU.Model.Dto.InputDto;
-using ZIFEIYU.Model.Dto.OutDto;
+using ZIFEIYU.Global;
 using ZIFEIYU.Services;
 using ZIFEIYU.util;
 
@@ -17,14 +17,16 @@ namespace ZIFEIYU.Pages
         {
         }
 
+        public bool _processing = false;
+
         [Inject]
         public ChatGPTServices ChatGPTServices { get; set; }
 
         [Inject]
-        public ZFYDatabase ZFYDatabase { get; set; }
+        public JsCommon JsCommon { get; set; }
 
         [Inject]
-        private IJSRuntime jsRuntime { get; set; }
+        public ZFYDatabase ZFYDatabase { get; set; }
 
         public MudTheme _theme = new();
         public bool _isDarkMode = true;
@@ -33,16 +35,14 @@ namespace ZIFEIYU.Pages
 
         public string HelperText { get; set; }
 
-        public DialogueOutput DialogueOutput { get; set; }
+        public OutChat DialogueOutput { get; set; }
         public MudTextField<string> singleLineReference;
-        public List<DialogueMessage> Messages { get; set; } = new List<DialogueMessage>();
+        public List<ChatMessage> Messages { get; set; } = new List<ChatMessage>();
 
         /// <summary>
         /// d
         /// </summary>
         public long ChatId { get; set; }
-
-        public bool _processing = false;
 
         protected override async Task OnInitializedAsync()
         {
@@ -51,7 +51,7 @@ namespace ZIFEIYU.Pages
             {
                 ChatId = chat.Id;
                 ChatTheme = chat.Theme;
-                Messages = await JsonHelper.DeserializeJsonToListAsync<DialogueMessage>(chat.DialogJson);
+                Messages = await JsonHelper.DeserializeJsonToListAsync<ChatMessage>(chat.DialogJson);
             }
 
             await base.OnInitializedAsync();
@@ -59,7 +59,7 @@ namespace ZIFEIYU.Pages
 
         protected override Task OnAfterRenderAsync(bool firstRender)
         {
-            UpdateScroll("IndexBody");
+            JsCommon.UpdateScroll("IndexBody");
             return base.OnAfterRenderAsync(firstRender);
         }
 
@@ -67,11 +67,11 @@ namespace ZIFEIYU.Pages
         {
             if (!string.IsNullOrWhiteSpace(HelperText))
             {
-                Messages.Add(new DialogueMessage() { Role = "user", Content = HelperText });
+                Messages.Add(new ChatMessage() { Role = "user", Content = HelperText });
                 HelperText = "";
                 _processing = true;
                 StateHasChanged();
-                await ChatGPTServices.SendSSEDialogue(new DialogueInput(Messages), DialogEvent);
+                await ChatGPTServices.SendSSEDialogue(new InChat(Messages), DialogEvent);
                 //Messages.Add(DialogueOutput.Choices[0].Message);
                 StateHasChanged();
                 _processing = false;
@@ -83,11 +83,11 @@ namespace ZIFEIYU.Pages
         {
             HelperText = string.Empty;
             ChatId = 0;
-            Messages = new List<DialogueMessage>();
+            Messages = new List<ChatMessage>();
             StateHasChanged();
         }
 
-        private void DialogEvent(object sender, List<DialogueMessage> e)
+        private void DialogEvent(object sender, List<ChatMessage> e)
         {
             Messages = e;
             StateHasChanged();
@@ -95,11 +95,6 @@ namespace ZIFEIYU.Pages
 
         public async Task Test()
         {
-        }
-
-        private void UpdateScroll(string id)
-        {
-            jsRuntime.InvokeAsync<object>("updateScroll", id);
         }
 
         /*public async Task KeyDown(KeyboardEventArgs keyboardEventArgs)
