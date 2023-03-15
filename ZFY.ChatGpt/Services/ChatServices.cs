@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Net.Http;
+using System.Text;
 using ZFY.ChatGpt.Dto;
 using ZFY.ChatGpt.Dto.InputDto;
 using ZFY.ChatGpt.Dto.OutDto;
@@ -7,9 +8,9 @@ namespace ZFY.ChatGpt.Services
 {
     public class ChatServices
     {
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly OpenAiHttpClientFactory _httpClientFactory;
 
-        public ChatServices(IHttpClientFactory httpClientFactory)
+        public ChatServices(OpenAiHttpClientFactory httpClientFactory)
         {
             this._httpClientFactory = httpClientFactory;
         }
@@ -23,14 +24,13 @@ namespace ZFY.ChatGpt.Services
 
             chatInput.Stream = true;
             HttpClient client = _httpClientFactory.CreateClient();
-            client.Timeout = TimeSpan.FromSeconds(15);
 
-            client.DefaultRequestHeaders.Add("Authorization", "Bearer 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");
+            //client.DefaultRequestHeaders.Add("Authorization", "Bearer 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");
             using (HttpContent httpContent = new StringContent(JsonHelper.SerializeObject(chatInput), Encoding.UTF8))
             {
                 httpContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
 
-                HttpResponseMessage response = await client.PostAsync("https://api.openai.com/v1/chat/completions", httpContent);
+                HttpResponseMessage response = await client.PostAsync("/v1/chat/completions", httpContent);
 
                 if (response.IsSuccessStatusCode)
                 {

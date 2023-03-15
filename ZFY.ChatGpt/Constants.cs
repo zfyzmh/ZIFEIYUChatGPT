@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace ZFY.ChatGpt
 {
     /// <summary>
-    /// Constants
+    /// 全局静态变量
     /// </summary>
     public static class Constants
     {
@@ -16,6 +16,9 @@ namespace ZFY.ChatGpt
         /// </summary>
         public static string ChatModel { get; } = "gpt-3.5-turbo-0301";
 
-        public static string ApiKey { get; set; } = "Bearer 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";
+        /// <summary>
+        ///
+        /// </summary>
+        public static string ApiKey { get; set; } = "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";
     }
 }
