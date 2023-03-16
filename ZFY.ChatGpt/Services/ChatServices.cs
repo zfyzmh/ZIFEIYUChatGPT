@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System.Net;
+using System.Net.Http;
 using System.Text;
 using ZFY.ChatGpt.Dto;
 using ZFY.ChatGpt.Dto.InputDto;
@@ -30,54 +31,68 @@ namespace ZFY.ChatGpt.Services
         /// <returns></returns>
         public async Task SendSSEChat(InChat chatInput, EventHandler<List<ChatMessage>> eventHandler)
         {
-            int speed = 100;
-            string diastr = "";
-            ChatMessage message = new ChatMessage("assistant");
-            chatInput.Messages.Add(message);
-
-            chatInput.Stream = true;
-            HttpClient client = _httpClientFactory.CreateClient();
-
-            //client.DefaultRequestHeaders.Add("Authorization", "Bearer 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");
-            using (HttpContent httpContent = new StringContent(JsonHelper.SerializeObject(chatInput), Encoding.UTF8))
+            try
             {
-                httpContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+                int speed = 100;
+                string diastr = "";
+                ChatMessage message = new ChatMessage("assistant");
+                chatInput.Messages.Add(message);
 
-                HttpResponseMessage response = await client.PostAsync("/v1/chat/completions", httpContent);
+                chatInput.Stream = true;
+                HttpClient client = _httpClientFactory.CreateClient();
 
-                if (response.IsSuccessStatusCode)
+                //client.DefaultRequestHeaders.Add("Authorization", "Bearer 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");
+                using (HttpContent httpContent = new StringContent(JsonHelper.SerializeObject(chatInput), Encoding.UTF8))
                 {
-                    bool close = true;
-                    using (Stream Stream = response.Content.ReadAsStream())
+                    httpContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+
+                    CancellationTokenSource CancellationToken = new CancellationTokenSource(5000);
+
+                    HttpResponseMessage response = await client.PostAsync("/v1/chat/completions", httpContent, CancellationToken.Token);
+
+                    if (response.IsSuccessStatusCode)
                     {
-                        StreamReader streamReader = new StreamReader(Stream);
-                        while (close)
+                        bool close = true;
+                        using (Stream Stream = response.Content.ReadAsStream())
                         {
-                            var str = streamReader.ReadLine();
-                            if (!string.IsNullOrEmpty(str))
+                            StreamReader streamReader = new StreamReader(Stream);
+                            while (close)
                             {
-                                str = str.Remove(0, str.IndexOf('{'));
-
-                                var dia = JsonHelper.DeserializeJsonToObject<OutChatSSE>(str);
-
-                                if (!string.IsNullOrEmpty(dia.Choices[0].Delta.Content))
+                                var str = streamReader.ReadLine();
+                                if (!string.IsNullOrEmpty(str))
                                 {
-                                    diastr += dia.Choices[0].Delta.Content;
-                                    message.Content = diastr;
-                                    eventHandler.Invoke(this, chatInput.Messages);
-                                    if (speed > 0)
+                                    str = str.Remove(0, str.IndexOf('{'));
+
+                                    var dia = JsonHelper.DeserializeJsonToObject<OutChatSSE>(str);
+
+                                    if (!string.IsNullOrEmpty(dia.Choices[0].Delta.Content))
                                     {
-                                        await Task.Delay(speed--);
+                                        diastr += dia.Choices[0].Delta.Content;
+                                        message.Content = diastr;
+                                        eventHandler.Invoke(this, chatInput.Messages);
+                                        if (speed > 0)
+                                        {
+                                            await Task.Delay(speed--);
+                                        }
                                     }
-                                }
-                                if (dia.Choices[0].FinishReason == "stop")
-                                {
-                                    close = false;
+                                    if (dia.Choices[0].FinishReason == "stop")
+                                    {
+                                        close = false;
+                                    }
                                 }
                             }
                         }
                     }
                 }
+            }
+            catch (TaskCanceledException)
+            {
+                chatInput.Messages.LastOrDefault()!.Content = "网络连接超时,请尝试以下方法解决\r\n" +
+                    "1.检查网络设置\r\n" +
+                    "2.设置更大的容忍超时时长\r\n" +
+                    "3.在chatgpt访问量更少时使用";
+                eventHandler.Invoke(this, chatInput.Messages);
+                return;
             }
         }
 

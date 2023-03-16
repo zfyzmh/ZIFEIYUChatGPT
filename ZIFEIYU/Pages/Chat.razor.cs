@@ -64,7 +64,6 @@ namespace ZIFEIYU.Pages
 
         protected override Task OnAfterRenderAsync(bool firstRender)
         {
-            //JsCommon.UpdateScroll("IndexBody");
             jSRuntime.InvokeAsync<Task>("updateScroll", "IndexBody");
             return base.OnAfterRenderAsync(firstRender);
         }
@@ -101,7 +100,6 @@ namespace ZIFEIYU.Pages
 
         public async Task Test()
         {
-            await jSRuntime.InvokeVoidAsync("displayTickerAlert1", "111", 2222);
         }
 
         /*public async Task KeyDown(KeyboardEventArgs keyboardEventArgs)

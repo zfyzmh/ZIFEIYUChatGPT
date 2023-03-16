@@ -19,10 +19,7 @@ namespace ZFY.ChatGpt
             services.AddHttpClient("ChatGPT", config =>
             {
                 config.BaseAddress = new Uri("https://api.openai.com");
-                config.DefaultRequestHeaders.Add("Accept", "application/json");
-                config.DefaultRequestHeaders.Add("Authorization", $"Bearer {Constants.ApiKey}");
-                //config.DefaultRequestHeaders.Add("header_1", "header_1");
-            });//.AddHttpMessageHandler<ChatHttpHandler>();
+            }).AddHttpMessageHandler(hander=>  new ChatHttpHandler());
             services.AddSingleton<OpenAiHttpClientFactory>();
             services.AddSingleton<ChatServices>();
 

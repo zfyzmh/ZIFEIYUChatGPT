@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ZFY.ChatGpt
 {
-    internal class Common
+    public class Common
     {
     }
 }
