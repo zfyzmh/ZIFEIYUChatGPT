@@ -46,7 +46,7 @@ namespace ZFY.ChatGpt.Services
                 {
                     httpContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
 
-                    CancellationTokenSource CancellationToken = new CancellationTokenSource(5000);
+                    CancellationTokenSource CancellationToken = new CancellationTokenSource(30000);
 
                     HttpResponseMessage response = await client.PostAsync("/v1/chat/completions", httpContent, CancellationToken.Token);
 
@@ -87,10 +87,19 @@ namespace ZFY.ChatGpt.Services
             }
             catch (TaskCanceledException)
             {
-                chatInput.Messages.LastOrDefault()!.Content = "网络连接超时,请尝试以下方法解决\r\n" +
+                var chatMsg = chatInput.Messages.LastOrDefault();
+                if (string.IsNullOrWhiteSpace(chatMsg.Content))
+                {
+                    chatMsg .Content= "网络连接超时,请尝试以下方法解决\r\n" +
                     "1.检查网络设置\r\n" +
                     "2.设置更大的容忍超时时长\r\n" +
                     "3.在chatgpt访问量更少时使用";
+                }
+                else
+                {
+                    chatMsg.Content += "\r\n>>>>>>>>>>>>>>>连接超时中断!";
+                }
+                    
                 eventHandler.Invoke(this, chatInput.Messages);
                 return;
             }
