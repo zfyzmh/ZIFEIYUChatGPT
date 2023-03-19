@@ -9,7 +9,7 @@
             <MudMenu  Dense="true" Icon="@Icons.Material.Outlined.AccessTime" Color="Color.Primary" Size="Size.Medium" ActivationEvent="@MouseEvent.MouseOver">
                 <ChildContent >
 
-                    <MudMenuItem OnClick="Test">Profile</MudMenuItem>
+                    <MudMenuItem >Profile</MudMenuItem>
                     <MudMenuItem>Theme</MudMenuItem>
                     <MudMenuItem>Usage</MudMenuItem>
                     <MudMenuItem>Sign Out</MudMenuItem>
@@ -31,7 +31,7 @@
                 </ContentTemplate>
             </SpinLoader>
         </div>
-        <MudTextField T="string" Style="height:45px;"  Variant="Variant.Filled" @bind-Value="HelperText" />
+        <MudTextField id="HelperText" Immediate="true" @ref="TextField" oninput="HandleInput" OnKeyPress="KeyDown" T="string" Style="height:45px;" Variant="Variant.Filled" @bind-Value="HelperText" />
         <div style="margin-left:10px;">
             <MudFab Size="Size.Small" OnClick="@Send" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Send" Disabled="_processing">
             </MudFab>

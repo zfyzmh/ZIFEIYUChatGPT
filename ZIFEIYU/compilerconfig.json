@@ -22,5 +22,9 @@
   {
     "outputFile": "Pages/Quiz.razor.css",
     "inputFile": "Pages/Quiz.razor.scss"
+  },
+  {
+    "outputFile": "Pages/Setting.razor.css",
+    "inputFile": "Pages/Setting.razor.scss"
   }
 ]

@@ -1,9 +1,34 @@
 ﻿@page "/Setting"
 
-
-
-<MudSwitch @bind-Checked="@Theme_Switch" Color="Color.Primary" />
-
-@code {
-	
-}
+<MudGrid>
+    <MudItem xs="12">
+        <MudPaper Style="padding:0.5rem;" Class="d-flex  align-center  mud-width-full">
+            <div class="config-item">
+                <div><MudText>黑暗模式</MudText></div>
+                <div ><MudSwitch @bind-Checked="@Theme_Switch" Color="Color.Primary" /></div>
+            </div>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12">
+        <MudPaper Style="padding:0.5rem;" Class="d-flex  align-center  mud-width-full">
+            <div class="config-item">
+                <div><MudText>使用代理</MudText></div>
+                <div><MudSwitch @bind-Checked="@Proxy_Switch" Color="Color.Primary" /></div>
+            </div>
+        </MudPaper>
+        
+    </MudItem>
+    <MudItem xs="12">
+        <MudPaper Style="padding:0.5rem;" Class="d-flex  align-center  mud-width-full">
+            <div class="config-item">
+                <div><MudText>代理地址</MudText></div>
+                <div >
+                    <MudTextField Style="flex: 7;" FullWidth="true" InputType="InputType.Url" Label="IP地址"
+                                  @bind-Value="ProxyAddress" Variant="@Variant.Text" />
+                    <MudTextField Style="flex: 3;" InputType="InputType.Number" Label="端口号"
+                                  @bind-Value="ProxyPort" Variant="@Variant.Text" />
+                </div>
+            </div>
+        </MudPaper>
+    </MudItem>
+</MudGrid>

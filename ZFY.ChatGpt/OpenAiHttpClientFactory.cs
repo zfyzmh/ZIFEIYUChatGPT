@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ZFY.ChatGpt
+﻿namespace ZFY.ChatGpt
 {
     /// <summary>
     ///
@@ -31,7 +24,7 @@ namespace ZFY.ChatGpt
         public HttpClient CreateClient(string name)
         {
             var client = _httpClientFactory.CreateClient(name);
-            client.Timeout = TimeSpan.FromSeconds(40);
+            client.Timeout = TimeSpan.FromSeconds(Constants.Timeout);
             return client;
         }
     }

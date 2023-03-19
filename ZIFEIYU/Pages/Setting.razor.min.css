@@ -1,0 +1,1 @@
+﻿.config-item{width:100%;display:grid;justify-content:center;align-items:center;grid-template-columns:1fr 1fr;}.config-item div:nth-of-type(2){justify-self:end;display:flex;}

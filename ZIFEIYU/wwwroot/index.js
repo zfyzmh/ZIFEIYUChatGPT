@@ -1,8 +1,10 @@
-﻿window.updateScroll = (divid) => {
-    var element = document.getElementById(divid);
+﻿//滚动到底部
+window.UpdateScroll = (divId) => {
+    var element = document.getElementById(divId);
     element.scrollTop = element.scrollHeight;
 };
 
+//获取是否移动端
 window.IsMobileDevice = () => {
     var uA = navigator.userAgent.toLowerCase();
     var ipad = uA.match(/ipad/i) == "ipad";
@@ -21,3 +23,8 @@ window.IsMobileDevice = () => {
         return true;
     }
 }; 
+
+//清空输入框
+window.ClearInput = (InputId) => {
+    document.querySelector("#" + InputId).value = "";
+};

@@ -13,6 +13,21 @@ namespace ZIFEIYU.Entity
         [PrimaryKey, AutoIncrement]
         public int UserId { get; set; }
 
-        public int IsDarkMode { get; set; }
+        public bool IsDarkMode { get; set; }
+
+        public string ChatModel { get; } = "";
+
+        public string ApiKey { get; set; } = "";
+
+        public int Timeout { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public bool IsProxy { get; set; } = false;
+
+        public string ProxyAddress { get; set; } = "";
+
+        public int ProxyPort { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using MudBlazor;
 using ZFY.ChatGpt.Dto;
@@ -9,7 +10,6 @@ using ZIFEIYU.Entity;
 using ZIFEIYU.Global;
 using ZIFEIYU.Services;
 using ZIFEIYU.util;
-using static MudBlazor.CategoryTypes;
 
 namespace ZIFEIYU.Pages
 {
@@ -36,12 +36,13 @@ namespace ZIFEIYU.Pages
         public MudTheme _theme = new();
         public bool _isDarkMode = true;
 
+        public MudTextField<string> TextField { get; set; }
         public string ChatTheme { get; set; }
 
         public string HelperText { get; set; }
 
         public OutChat DialogueOutput { get; set; }
-        public MudTextField<string> singleLineReference;
+
         public List<ChatMessage> Messages { get; set; } = new List<ChatMessage>();
 
         /// <summary>
@@ -64,7 +65,7 @@ namespace ZIFEIYU.Pages
 
         protected override Task OnAfterRenderAsync(bool firstRender)
         {
-            jSRuntime.InvokeAsync<Task>("updateScroll", "IndexBody");
+            jSRuntime.InvokeAsync<Task>("UpdateScroll", "IndexBody");
             return base.OnAfterRenderAsync(firstRender);
         }
 
@@ -73,13 +74,14 @@ namespace ZIFEIYU.Pages
             if (!string.IsNullOrWhiteSpace(HelperText))
             {
                 Messages.Add(new ChatMessage() { Role = "user", Content = HelperText });
-                HelperText = "";
+                await TextField.Clear();
                 _processing = true;
                 StateHasChanged();
                 await ChatGPTServices.SendSSEChat(new InChat(Messages), DialogEvent);
                 //Messages.Add(DialogueOutput.Choices[0].Message);
-                StateHasChanged();
                 _processing = false;
+                await jSRuntime.InvokeAsync<Task>("ClearInput", "HelperText");
+                StateHasChanged();
                 await ChatGPTServices.SaveChat(Messages, ChatId);
             }
         }
@@ -98,17 +100,16 @@ namespace ZIFEIYU.Pages
             StateHasChanged();
         }
 
-        public async Task Test()
+        public async void Test(string eventCallback)
         {
         }
 
-        /*public async Task KeyDown(KeyboardEventArgs keyboardEventArgs)
-		{
-			if (keyboardEventArgs.Code == "Enter" && !_processing) {
-				await Send();
-				HelperText = "";
-				StateHasChanged();
-			};
-		}*/
+        public async void KeyDown(KeyboardEventArgs keyboardEventArgs)
+        {
+            if (keyboardEventArgs.Code == "Enter" && !_processing && !string.IsNullOrWhiteSpace(TextField.Value))
+            {
+                await Send();
+            };
+        }
     }
 }

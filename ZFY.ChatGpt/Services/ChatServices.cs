@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Text.RegularExpressions;
 using ZFY.ChatGpt.Dto;
 using ZFY.ChatGpt.Dto.InputDto;
 using ZFY.ChatGpt.Dto.OutDto;
@@ -41,22 +42,18 @@ namespace ZFY.ChatGpt.Services
                 chatInput.Stream = true;
                 HttpClient client = _httpClientFactory.CreateClient();
 
-                //client.DefaultRequestHeaders.Add("Authorization", "Bearer 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");
-                using (HttpContent httpContent = new StringContent(JsonHelper.SerializeObject(chatInput), Encoding.UTF8))
+                string code = "";
+                bool isCode = false;
+                using (HttpContent httpContent = new StringContent(JsonHelper.SerializeObject(chatInput), Encoding.UTF8, "application/json"))
                 {
-                    httpContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
-
-                    CancellationTokenSource CancellationToken = new CancellationTokenSource(30000);
-
-                    HttpResponseMessage response = await client.PostAsync("/v1/chat/completions", httpContent, CancellationToken.Token);
-
+                    HttpResponseMessage response = await client.PostAsync("/v1/chat/completions", httpContent);
                     if (response.IsSuccessStatusCode)
                     {
-                        bool close = true;
+                        bool close = false;
                         using (Stream Stream = response.Content.ReadAsStream())
                         {
                             StreamReader streamReader = new StreamReader(Stream);
-                            while (close)
+                            while (!close)
                             {
                                 var str = streamReader.ReadLine();
                                 if (!string.IsNullOrEmpty(str))
@@ -67,7 +64,26 @@ namespace ZFY.ChatGpt.Services
 
                                     if (!string.IsNullOrEmpty(dia.Choices[0].Delta.Content))
                                     {
-                                        diastr += dia.Choices[0].Delta.Content;
+                                        var content = dia.Choices[0].Delta.Content;
+                                        if (dia.Choices[0].Delta.Content.Contains('`'))
+                                        {
+                                            isCode = true;
+                                            code += content;
+
+                                            if (Regex.Matches(code, "`").Count == 6)
+                                            {
+                                                diastr += code;
+                                                code = "";
+                                                message.Content = diastr;
+                                                eventHandler.Invoke(this, chatInput.Messages);
+                                            }
+                                            else
+                                            {
+                                                continue;
+                                            }
+                                        }
+                                        if (isCode) { code += content; continue; };
+                                        diastr += content;
                                         message.Content = diastr;
                                         eventHandler.Invoke(this, chatInput.Messages);
                                         if (speed > 0)
@@ -77,11 +93,24 @@ namespace ZFY.ChatGpt.Services
                                     }
                                     if (dia.Choices[0].FinishReason == "stop")
                                     {
-                                        close = false;
+                                        close = true;
                                     }
                                 }
                             }
                         }
+                    }
+                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        var chatMsg = chatInput.Messages.LastOrDefault();
+                        chatMsg.Content = "ApiKey未设置或已过期!";
+                        eventHandler.Invoke(this, chatInput.Messages);
+                        return;
+                    }
+                    else
+                    {
+                        var chatMsg = chatInput.Messages.LastOrDefault();
+                        chatMsg.Content = response.Content.ToString();
+                        eventHandler.Invoke(this, chatInput.Messages);
                     }
                 }
             }
@@ -90,7 +119,7 @@ namespace ZFY.ChatGpt.Services
                 var chatMsg = chatInput.Messages.LastOrDefault();
                 if (string.IsNullOrWhiteSpace(chatMsg.Content))
                 {
-                    chatMsg .Content= "网络连接超时,请尝试以下方法解决\r\n" +
+                    chatMsg.Content = "网络连接超时,请尝试以下方法解决\r\n" +
                     "1.检查网络设置\r\n" +
                     "2.设置更大的容忍超时时长\r\n" +
                     "3.在chatgpt访问量更少时使用";
@@ -99,22 +128,42 @@ namespace ZFY.ChatGpt.Services
                 {
                     chatMsg.Content += "\r\n>>>>>>>>>>>>>>>连接超时中断!";
                 }
-                    
+
+                eventHandler.Invoke(this, chatInput.Messages);
+                return;
+            }
+            catch (Exception ex)
+            {
+                var chatMsg = chatInput.Messages.LastOrDefault();
+                chatMsg.Content = "网络连接失败,请检查网络!";
                 eventHandler.Invoke(this, chatInput.Messages);
                 return;
             }
         }
 
-        /*public async Task<OutChat> SendDialogue(InChat chatInput)
+        public async Task<OutChat> SendChat(InChat chatInput)
         {
             try
             {
-                return await HttpHelper.HttpPostAsync<OutChat>("https://api.openai.com/v1/chat/completions", JsonHelper.SerializeObject(chatInput), headers: Headers);
+                chatInput.Stream = false;
+                HttpClient client = _httpClientFactory.CreateClient();
+                using (HttpContent httpContent = new StringContent(JsonHelper.SerializeObject(chatInput), Encoding.UTF8))
+                {
+                    HttpResponseMessage response = await client.PostAsync("/v1/chat/completions", httpContent);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return (await response.Content.ReadAsStringAsync()).ToEntity<OutChat>();
+                    }
+                    else
+                    {
+                        return new OutChat();
+                    }
+                }
             }
             catch (Exception)
             {
-                return new DialogueOutput();
+                return new OutChat();
             }
-        }*/
+        }
     }
 }

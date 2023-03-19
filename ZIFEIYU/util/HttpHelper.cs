@@ -15,7 +15,7 @@ namespace ZIFEIYU.util
         /// <returns></returns>
         public static string HttpPost(string url, string postData = null, string contentType = "application/json", int timeOut = 30, Dictionary<string, string> headers = null)
         {
-            postData = postData ?? "";
+            postData ??= "";
             using (HttpClient client = new HttpClient())
             {
                 if (headers != null)
@@ -45,7 +45,7 @@ namespace ZIFEIYU.util
         /// <returns></returns>
         public static async Task<string> HttpPostAsync(string url, string postData = null, string contentType = "application/json", int timeOut = 30, Dictionary<string, string> headers = null)
         {
-            postData = postData ?? "";
+            postData ??= "";
             using (HttpClient client = new HttpClient())
             {
                 client.Timeout = new TimeSpan(0, 0, timeOut);
@@ -165,26 +165,6 @@ namespace ZIFEIYU.util
         {
             var res = await HttpGetAsync(url, contentType, headers);
             return res.ToEntity<T>();
-        }
-    }
-
-    /// <summary>
-    /// Json扩展方法
-    /// </summary>
-    public static class JsonExtends
-    {
-        public static T ToEntity<T>(this string val)
-        {
-            return JsonConvert.DeserializeObject<T>(val);
-        }
-
-        //public static List<T> ToEntityList<T>(this string val)
-        //{
-        //    return JsonConvert.DeserializeObject<List<T>>(val);
-        //}
-        public static string ToJson<T>(this T entity, Formatting formatting = Formatting.None)
-        {
-            return JsonConvert.SerializeObject(entity, formatting);
         }
     }
 }
