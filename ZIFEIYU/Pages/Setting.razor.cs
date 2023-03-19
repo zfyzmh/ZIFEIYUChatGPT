@@ -33,6 +33,36 @@ namespace ZIFEIYU.Pages
             }
         }
 
+        public string ApiKey
+        {
+            get { return UserConfig.ApiKey; }
+            set
+            {
+                UserConfig.ApiKey = value;
+                UserServices!.UpdateConfig(UserConfig);
+            }
+        }
+
+        public string ChatModel
+        {
+            get { return UserConfig.ChatModel; }
+            set
+            {
+                UserConfig.ChatModel = value;
+                UserServices!.UpdateConfig(UserConfig);
+            }
+        }
+
+        public int TimeOut
+        {
+            get { return UserConfig.Timeout; }
+            set
+            {
+                UserConfig.Timeout = value;
+                UserServices!.UpdateConfig(UserConfig);
+            }
+        }
+
         public int ProxyPort
         {
             get { return UserConfig.ProxyPort; }

@@ -1,15 +1,14 @@
 ﻿@page "/Setting"
 
-<MudGrid>
-    <MudItem xs="12">
+<div class="pagebody" >
+ 
         <MudPaper Style="padding:0.5rem;" Class="d-flex  align-center  mud-width-full">
             <div class="config-item">
-                <div><MudText>黑暗模式</MudText></div>
+                <div><MudText>暗黑模式</MudText></div>
                 <div ><MudSwitch @bind-Checked="@Theme_Switch" Color="Color.Primary" /></div>
             </div>
         </MudPaper>
-    </MudItem>
-    <MudItem xs="12">
+ 
         <MudPaper Style="padding:0.5rem;" Class="d-flex  align-center  mud-width-full">
             <div class="config-item">
                 <div><MudText>使用代理</MudText></div>
@@ -17,8 +16,7 @@
             </div>
         </MudPaper>
         
-    </MudItem>
-    <MudItem xs="12">
+
         <MudPaper Style="padding:0.5rem;" Class="d-flex  align-center  mud-width-full">
             <div class="config-item">
                 <div><MudText>代理地址</MudText></div>
@@ -30,5 +28,41 @@
                 </div>
             </div>
         </MudPaper>
-    </MudItem>
-</MudGrid>
+        <MudPaper Style="padding:0.5rem;" Class="d-flex  align-center  mud-width-full">
+            <div class="config-item">
+                <div><MudText>APIKEY</MudText></div>
+                <div>
+                    <MudTextField  FullWidth="true" InputType="InputType.Password" Label="Key"
+                                  @bind-Value="ApiKey" Variant="@Variant.Text" />
+                   
+                </div>
+            </div>
+        </MudPaper>
+        <MudPaper Style="padding:0.5rem;" Class="d-flex  align-center  mud-width-full">
+            <div class="config-item">
+                <div><MudText>Chat模型</MudText></div>
+                <div>
+                    <MudSelect T="string" @bind-Value="ChatModel" AnchorOrigin="Origin.BottomCenter">
+                        <MudSelectItem Value="@("gpt-3.5-turbo")" />
+                        <MudSelectItem Value="@("gpt-3.5-turbo-0301")" />
+                    </MudSelect>
+                </div>
+            </div>
+        </MudPaper>
+        <MudPaper  Class="d-flex  align-center  mud-width-full">
+            <div class="config-item">
+                <div><MudText>超时时间</MudText></div>
+                <div>
+                    <MudNumericField @bind-Value="TimeOut" Label="单位/秒" Variant="Variant.Text" Min="3" Max="60" />
+                </div>
+            </div>
+        </MudPaper>
+        <MudPaper  Class="d-flex  align-center  mud-width-full">
+            <div class="config-item">
+                <div><MudText>SSL模式</MudText></div>
+                <div>
+                    <MudNumericField @bind-Value="TimeOut" Label="单位/秒" Variant="Variant.Text" Min="3" Max="60" />
+                </div>
+            </div>
+        </MudPaper>
+</div>

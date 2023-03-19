@@ -104,7 +104,10 @@ namespace ZIFEIYU.util
         //}
         public static string ToJson<T>(this T entity, Formatting formatting = Formatting.None)
         {
-            return JsonConvert.SerializeObject(entity, formatting);
+            return JsonConvert.SerializeObject(entity, formatting, new JsonSerializerSettings()
+            {
+                ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            });
         }
     }
 }

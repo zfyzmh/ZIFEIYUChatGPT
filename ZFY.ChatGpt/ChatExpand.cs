@@ -27,7 +27,7 @@ namespace ZFY.ChatGpt
             {
                 return new HttpClientHandler()
                 {
-                    Proxy = new WebProxy(Constants.ProxyAddress, Constants.ProxyPort),
+                    Proxy = new WebProxy(Constants.ProxyAddress == string.Empty ? "127.0.0.1" : Constants.ProxyAddress, Constants.ProxyPort),
                     UseProxy = Constants.IsProxy
                 };
             }

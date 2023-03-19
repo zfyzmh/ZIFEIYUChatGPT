@@ -32,8 +32,9 @@ namespace ZIFEIYU
 
         protected override async Task OnInitializedAsync()
         {
-            _isDarkMode = (await Common.ServiceProvider.GetService<UserServices>().GetConfig()).IsDarkMode;
-
+            var userServices = Common.ServiceProvider.GetService<UserServices>();
+            _isDarkMode = (await userServices.GetConfig()).IsDarkMode;
+            await userServices.UpdateConfig(await userServices.GetConfig());
             await base.OnInitializedAsync();
         }
 

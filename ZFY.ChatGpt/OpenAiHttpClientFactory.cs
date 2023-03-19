@@ -1,4 +1,6 @@
-﻿namespace ZFY.ChatGpt
+﻿using System.Net;
+
+namespace ZFY.ChatGpt
 {
     /// <summary>
     ///
@@ -25,6 +27,11 @@
         {
             var client = _httpClientFactory.CreateClient(name);
             client.Timeout = TimeSpan.FromSeconds(Constants.Timeout);
+            /*new HttpClientHandler()
+            {
+                Proxy = new WebProxy(Constants.ProxyAddress == string.Empty ? "127.0.0.1" : Constants.ProxyAddress, Constants.ProxyPort),
+                UseProxy = Constants.IsProxy
+            }*/
             return client;
         }
     }
