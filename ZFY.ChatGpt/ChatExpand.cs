@@ -25,13 +25,14 @@ namespace ZFY.ChatGpt
             .AddHttpMessageHandler(hander => new ChatHttpHandler())
             .ConfigurePrimaryHttpMessageHandler(() =>
             {
-                return new HttpClientHandler()
+                var handler = new HttpClientHandler();
+                if (Constants.IsProxy)
                 {
-                    Proxy = new WebProxy(Constants.ProxyAddress == string.Empty ? "127.0.0.1" : Constants.ProxyAddress, Constants.ProxyPort),
-                    UseProxy = Constants.IsProxy
+                    handler.Proxy = new WebProxy(Constants.ProxyAddress == string.Empty ? "127.0.0.1" : Constants.ProxyAddress, Constants.ProxyPort);
+                    handler.UseProxy = true;
                 };
+                return handler;
             }
-
             );
             services.AddSingleton<OpenAiHttpClientFactory>();
             services.AddSingleton<ChatServices>();

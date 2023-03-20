@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -135,7 +136,9 @@ namespace ZFY.ChatGpt.Services
             catch (Exception ex)
             {
                 var chatMsg = chatInput.Messages.LastOrDefault();
-                chatMsg.Content = "网络连接失败,请检查网络!";
+                chatMsg.Content = "网络连接失败,请检查网络!" +
+                    "\r\n" + ex.Message + "\r\n";
+                ;
                 eventHandler.Invoke(this, chatInput.Messages);
                 return;
             }
@@ -154,15 +157,35 @@ namespace ZFY.ChatGpt.Services
                     {
                         return (await response.Content.ReadAsStringAsync()).ToEntity<OutChat>();
                     }
+                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        var msg = new ChatMessage() { Role = "assistant", Content = "ApiKey未设置或已过期" };
+                        return new OutChat() { Choices = new Choice[] { new Choice() { Message = msg } } };
+                    }
                     else
                     {
-                        return new OutChat();
+                        var msg = new ChatMessage() { Role = "assistant", Content = "访问chatgpt失败,状态码:" + response.StatusCode.ToString() };
+                        return new OutChat() { Choices = new Choice[] { new Choice() { Message = msg } } };
                     }
                 }
             }
-            catch (Exception)
+            catch (TaskCanceledException)
             {
-                return new OutChat();
+                string errprMessage = "网络连接超时,请尝试以下方法解决\r\n" +
+                    "1.检查网络设置\r\n" +
+                    "2.设置更大的容忍超时时长\r\n" +
+                    "3.在chatgpt访问量更少时使用";
+                ;
+                var msg = new ChatMessage() { Role = "assistant", Content = errprMessage };
+                return new OutChat() { Choices = new Choice[] { new Choice() { Message = msg } } };
+            }
+            catch (Exception ex)
+            {
+                string errprMessage = "网络连接失败,请检查网络配置!" +
+                    "\r\n" + ex.Message + "\r\n";
+                ;
+                var msg = new ChatMessage() { Role = "assistant", Content = errprMessage };
+                return new OutChat() { Choices = new Choice[] { new Choice() { Message = msg } } };
             }
         }
     }

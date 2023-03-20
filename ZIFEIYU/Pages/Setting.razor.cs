@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
+using MudBlazor;
+using System.Diagnostics;
 using ZIFEIYU.Entity;
 using ZIFEIYU.Global;
 using ZIFEIYU.Services;
@@ -91,6 +93,28 @@ namespace ZIFEIYU.Pages
             {
                 UserConfig.IsProxy = value;
                 UserServices!.UpdateConfig(UserConfig);
+                RestartApp();
+            }
+        }
+
+        [Inject] private IDialogService DialogService { get; set; }
+
+        /// <summary>
+        /// 重启应用
+        /// </summary>
+        public async Task RestartApp()
+        {
+            bool? result = await DialogService.ShowMessageBox(
+            "提示!",
+            "更改此配置需重启应用以响应更新!",
+            yesText: "立刻重启!", cancelText: "稍后手动重启");
+
+            if (result.Value)
+            {
+                var startInfo = new ProcessStartInfo(
+                Process.GetCurrentProcess().MainModule.FileName);
+                Process.Start(startInfo);
+                Process.GetCurrentProcess().Kill();
             }
         }
     }
