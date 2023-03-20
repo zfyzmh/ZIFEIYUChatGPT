@@ -26,7 +26,7 @@ namespace ZFY.ChatGpt.Services
         }
 
         /// <summary>
-        /// 发送sse请求,即逐字回复版,但有可能连接成功但回复时间超长,不建议使用
+        /// 发送sse请求,即逐字回复版
         /// </summary>
         /// <param name="chatInput"></param>
         /// <param name="eventHandler"></param>
@@ -43,8 +43,6 @@ namespace ZFY.ChatGpt.Services
                 chatInput.Stream = true;
                 HttpClient client = _httpClientFactory.CreateClient();
 
-                string code = "";
-                bool isCode = false;
                 using (HttpContent httpContent = new StringContent(JsonHelper.SerializeObject(chatInput), Encoding.UTF8, "application/json"))
                 {
                     HttpResponseMessage response = await client.PostAsync("/v1/chat/completions", httpContent);
@@ -66,24 +64,6 @@ namespace ZFY.ChatGpt.Services
                                     if (!string.IsNullOrEmpty(dia.Choices[0].Delta.Content))
                                     {
                                         var content = dia.Choices[0].Delta.Content;
-                                        if (dia.Choices[0].Delta.Content.Contains('`'))
-                                        {
-                                            isCode = true;
-                                            code += content;
-
-                                            if (Regex.Matches(code, "`").Count == 6)
-                                            {
-                                                diastr += code;
-                                                code = "";
-                                                message.Content = diastr;
-                                                eventHandler.Invoke(this, chatInput.Messages);
-                                            }
-                                            else
-                                            {
-                                                continue;
-                                            }
-                                        }
-                                        if (isCode) { code += content; continue; };
                                         diastr += content;
                                         message.Content = diastr;
                                         eventHandler.Invoke(this, chatInput.Messages);

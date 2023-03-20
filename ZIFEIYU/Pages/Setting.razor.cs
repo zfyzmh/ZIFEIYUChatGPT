@@ -25,16 +25,6 @@ namespace ZIFEIYU.Pages
             set => userConfig = value;
         }
 
-        public string ProxyAddress
-        {
-            get { return UserConfig.ProxyAddress; }
-            set
-            {
-                UserConfig.ProxyAddress = value;
-                UserServices!.UpdateConfig(UserConfig);
-            }
-        }
-
         public string ApiKey
         {
             get { return UserConfig.ApiKey; }
@@ -42,6 +32,28 @@ namespace ZIFEIYU.Pages
             {
                 UserConfig.ApiKey = value;
                 UserServices!.UpdateConfig(UserConfig);
+            }
+        }
+
+        public string ProxyAddress
+        {
+            get { return UserConfig.ProxyAddress; }
+            set
+            {
+                UserConfig.ProxyAddress = value;
+                UserServices!.UpdateConfig(UserConfig);
+                if (Proxy_Switch) RestartApp();
+            }
+        }
+
+        public int ProxyPort
+        {
+            get { return UserConfig.ProxyPort; }
+            set
+            {
+                UserConfig.ProxyPort = value;
+                UserServices!.UpdateConfig(UserConfig);
+                if (Proxy_Switch) RestartApp();
             }
         }
 
@@ -61,16 +73,6 @@ namespace ZIFEIYU.Pages
             set
             {
                 UserConfig.Timeout = value;
-                UserServices!.UpdateConfig(UserConfig);
-            }
-        }
-
-        public int ProxyPort
-        {
-            get { return UserConfig.ProxyPort; }
-            set
-            {
-                UserConfig.ProxyPort = value;
                 UserServices!.UpdateConfig(UserConfig);
             }
         }
