@@ -29,6 +29,8 @@ namespace ZFY.ChatGpt
                 if (Constants.IsProxy)
                 {
                     handler.Proxy = new WebProxy(Constants.ProxyAddress == string.Empty ? "127.0.0.1" : Constants.ProxyAddress, Constants.ProxyPort);
+                    //handler.UseDefaultCredentials = false;
+                    //handler.Credentials = new NetworkCredential("", "");
                     handler.UseProxy = true;
                 };
                 return handler;

@@ -46,7 +46,7 @@ namespace ZIFEIYU.Pages
         public List<ChatMessage> Messages { get; set; } = new List<ChatMessage>();
 
         /// <summary>
-        /// d
+        ///
         /// </summary>
         public long ChatId { get; set; }
 
