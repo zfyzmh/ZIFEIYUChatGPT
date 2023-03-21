@@ -133,7 +133,7 @@ namespace ZFY.ChatGpt.Services
             {
                 chatInput.Stream = false;
                 HttpClient client = _httpClientFactory.CreateClient();
-                using (HttpContent httpContent = new StringContent(JsonHelper.SerializeObject(chatInput), Encoding.UTF8))
+                using (HttpContent httpContent = new StringContent(JsonHelper.SerializeObject(chatInput), Encoding.UTF8, "application/json"))
                 {
                     HttpResponseMessage response = await client.PostAsync("/v1/chat/completions", httpContent);
                     if (response.IsSuccessStatusCode)

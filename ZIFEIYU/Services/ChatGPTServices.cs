@@ -1,4 +1,5 @@
-﻿using ZFY.ChatGpt.Dto;
+﻿using System.Collections.Generic;
+using ZFY.ChatGpt.Dto;
 using ZFY.ChatGpt.Dto.InputDto;
 using ZFY.ChatGpt.Dto.OutDto;
 using ZFY.ChatGpt.Services;
@@ -44,9 +45,28 @@ namespace ZIFEIYU.Services
             await _dao.SaveChat(chatEntity);
         }
 
-        public async Task SendSSEChat(InChat dialogueInput, EventHandler<List<ChatMessage>> eventHandler)
+        public async Task SendSSEChat(InChat chatInput, EventHandler<List<ChatMessage>> eventHandler)
         {
-            await chatServices.SendSSEChat(dialogueInput, eventHandler);
+            await chatServices.SendSSEChat(chatInput, eventHandler);
+        }
+
+        public async Task SendChat(InChat chatInput, EventHandler<List<ChatMessage>> eventHandler)
+        {
+            int speed = 100;
+            OutChat outChat = await chatServices.SendChat(chatInput);
+            var chatmessagee = outChat.Choices[0].Message;
+
+            ChatMessage message = new ChatMessage("assistant");
+            chatInput.Messages.Add(message);
+
+            foreach (var item in chatmessagee.Content)
+            {
+                message.Content += item;
+                eventHandler.Invoke(this, chatInput.Messages);
+
+                if (speed > 0) await Task.Delay(speed); speed--;
+            }
+            return;
         }
     }
 }

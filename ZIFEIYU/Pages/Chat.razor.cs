@@ -77,8 +77,10 @@ namespace ZIFEIYU.Pages
                 await TextField.Clear();
                 _processing = true;
                 StateHasChanged();
-                await ChatGPTServices.SendSSEChat(new InChat(Messages), DialogEvent);
+                //await ChatGPTServices.SendSSEChat(new InChat(Messages), DialogEvent);
                 //Messages.Add(DialogueOutput.Choices[0].Message);
+                await ChatGPTServices.SendChat(new InChat(Messages), DialogEvent);
+
                 _processing = false;
                 await jSRuntime.InvokeAsync<Task>("ClearInput", "HelperText");
                 StateHasChanged();
