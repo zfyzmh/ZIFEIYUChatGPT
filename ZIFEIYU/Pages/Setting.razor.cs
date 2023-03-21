@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
+using MudBlazor;
+using System.Diagnostics;
 using ZIFEIYU.Entity;
 using ZIFEIYU.Global;
 using ZIFEIYU.Services;
@@ -23,16 +25,6 @@ namespace ZIFEIYU.Pages
             set => userConfig = value;
         }
 
-        public string ProxyAddress
-        {
-            get { return UserConfig.ProxyAddress; }
-            set
-            {
-                UserConfig.ProxyAddress = value;
-                UserServices!.UpdateConfig(UserConfig);
-            }
-        }
-
         public string ApiKey
         {
             get { return UserConfig.ApiKey; }
@@ -40,6 +32,28 @@ namespace ZIFEIYU.Pages
             {
                 UserConfig.ApiKey = value;
                 UserServices!.UpdateConfig(UserConfig);
+            }
+        }
+
+        public string ProxyAddress
+        {
+            get { return UserConfig.ProxyAddress; }
+            set
+            {
+                UserConfig.ProxyAddress = value;
+                UserServices!.UpdateConfig(UserConfig);
+                if (Proxy_Switch) RestartApp();
+            }
+        }
+
+        public int ProxyPort
+        {
+            get { return UserConfig.ProxyPort; }
+            set
+            {
+                UserConfig.ProxyPort = value;
+                UserServices!.UpdateConfig(UserConfig);
+                if (Proxy_Switch) RestartApp();
             }
         }
 
@@ -63,16 +77,6 @@ namespace ZIFEIYU.Pages
             }
         }
 
-        public int ProxyPort
-        {
-            get { return UserConfig.ProxyPort; }
-            set
-            {
-                UserConfig.ProxyPort = value;
-                UserServices!.UpdateConfig(UserConfig);
-            }
-        }
-
         public bool Theme_Switch
         {
             get { return (bool)EventDispatcher.DispatchFunc("IsDarkTheme"); }
@@ -91,6 +95,28 @@ namespace ZIFEIYU.Pages
             {
                 UserConfig.IsProxy = value;
                 UserServices!.UpdateConfig(UserConfig);
+                RestartApp();
+            }
+        }
+
+        [Inject] private IDialogService DialogService { get; set; }
+
+        /// <summary>
+        /// 重启应用
+        /// </summary>
+        public async Task RestartApp()
+        {
+            bool? result = await DialogService.ShowMessageBox(
+            "提示!",
+            "更改此配置需重启应用以响应更新!",
+            yesText: "立刻重启!", cancelText: "稍后手动重启");
+
+            if (result.Value)
+            {
+                var startInfo = new ProcessStartInfo(
+                Process.GetCurrentProcess().MainModule.FileName);
+                Process.Start(startInfo);
+                Process.GetCurrentProcess().Kill();
             }
         }
     }

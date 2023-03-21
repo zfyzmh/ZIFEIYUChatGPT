@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -25,7 +26,10 @@ namespace ZFY.ChatGpt.Services
         }
 
         /// <summary>
-        /// 发送sse请求,即逐字回复版,但有可能连接成功但回复时间超长,不建议使用
+        /// openai 开放出来的对话接口如果设置 stream为true 则获取不到该次请求消耗的令牌数,
+        /// 是的，这是 OpenAI API 目前的行为。如果在调用 OpenAI API 时将 stream 参数设置为 true，则无法获取该次请求消耗的令牌数。这是因为流式传输的方式不适用于令牌计数。
+        /// 如果您需要获取使用的令牌数，请将 stream 参数设置为 false 或不指定该参数。在这种情况下，您将能够访问响应中的 "X-Request-ID" 和 "X-Usage" 标头，这些标头将提供有关使用的令牌数的详细信息。
+        ///请注意，在流式传输模式下，由于请求和响应之间的延迟更长，因此可能会使用更多的令牌。因此，如果您需要最大程度地优化令牌使用，请避免使用流式传输模式。发送sse请求,即逐字回复版,在流式传输模式下，由于请求和响应之间的延迟更长，因此可能会使用更多的令牌。因此，如果您需要最大程度地优化令牌使用，请避免使用流式传输模式。
         /// </summary>
         /// <param name="chatInput"></param>
         /// <param name="eventHandler"></param>
@@ -42,8 +46,6 @@ namespace ZFY.ChatGpt.Services
                 chatInput.Stream = true;
                 HttpClient client = _httpClientFactory.CreateClient();
 
-                string code = "";
-                bool isCode = false;
                 using (HttpContent httpContent = new StringContent(JsonHelper.SerializeObject(chatInput), Encoding.UTF8, "application/json"))
                 {
                     HttpResponseMessage response = await client.PostAsync("/v1/chat/completions", httpContent);
@@ -65,24 +67,6 @@ namespace ZFY.ChatGpt.Services
                                     if (!string.IsNullOrEmpty(dia.Choices[0].Delta.Content))
                                     {
                                         var content = dia.Choices[0].Delta.Content;
-                                        if (dia.Choices[0].Delta.Content.Contains('`'))
-                                        {
-                                            isCode = true;
-                                            code += content;
-
-                                            if (Regex.Matches(code, "`").Count == 6)
-                                            {
-                                                diastr += code;
-                                                code = "";
-                                                message.Content = diastr;
-                                                eventHandler.Invoke(this, chatInput.Messages);
-                                            }
-                                            else
-                                            {
-                                                continue;
-                                            }
-                                        }
-                                        if (isCode) { code += content; continue; };
                                         diastr += content;
                                         message.Content = diastr;
                                         eventHandler.Invoke(this, chatInput.Messages);
@@ -135,7 +119,9 @@ namespace ZFY.ChatGpt.Services
             catch (Exception ex)
             {
                 var chatMsg = chatInput.Messages.LastOrDefault();
-                chatMsg.Content = "网络连接失败,请检查网络!";
+                chatMsg.Content = "网络连接失败,请检查网络!" +
+                    "\r\n" + ex.Message + "\r\n";
+                ;
                 eventHandler.Invoke(this, chatInput.Messages);
                 return;
             }
@@ -147,22 +133,42 @@ namespace ZFY.ChatGpt.Services
             {
                 chatInput.Stream = false;
                 HttpClient client = _httpClientFactory.CreateClient();
-                using (HttpContent httpContent = new StringContent(JsonHelper.SerializeObject(chatInput), Encoding.UTF8))
+                using (HttpContent httpContent = new StringContent(JsonHelper.SerializeObject(chatInput), Encoding.UTF8, "application/json"))
                 {
                     HttpResponseMessage response = await client.PostAsync("/v1/chat/completions", httpContent);
                     if (response.IsSuccessStatusCode)
                     {
                         return (await response.Content.ReadAsStringAsync()).ToEntity<OutChat>();
                     }
+                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        var msg = new ChatMessage() { Role = "assistant", Content = "ApiKey未设置或已过期" };
+                        return new OutChat() { Choices = new Choice[] { new Choice() { Message = msg } } };
+                    }
                     else
                     {
-                        return new OutChat();
+                        var msg = new ChatMessage() { Role = "assistant", Content = "访问chatgpt失败,状态码:" + response.StatusCode.ToString() };
+                        return new OutChat() { Choices = new Choice[] { new Choice() { Message = msg } } };
                     }
                 }
             }
-            catch (Exception)
+            catch (TaskCanceledException)
             {
-                return new OutChat();
+                string errprMessage = "网络连接超时,请尝试以下方法解决\r\n" +
+                    "1.检查网络设置\r\n" +
+                    "2.设置更大的容忍超时时长\r\n" +
+                    "3.在chatgpt访问量更少时使用";
+                ;
+                var msg = new ChatMessage() { Role = "assistant", Content = errprMessage };
+                return new OutChat() { Choices = new Choice[] { new Choice() { Message = msg } } };
+            }
+            catch (Exception ex)
+            {
+                string errprMessage = "网络连接失败,请检查网络配置!" +
+                    "\r\n" + ex.Message + "\r\n";
+                ;
+                var msg = new ChatMessage() { Role = "assistant", Content = errprMessage };
+                return new OutChat() { Choices = new Choice[] { new Choice() { Message = msg } } };
             }
         }
     }
