@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace ZFY.ChatGpt.Dto.InputDto
     {
         public InChat(List<ChatMessage> messages)
         {
-            Model = Constants.ChatModel;
+            Model = ChatServiceProvider.ServiceProvider.GetService<ChatOption>()!.ChatModel;
             Messages = messages;
         }
 

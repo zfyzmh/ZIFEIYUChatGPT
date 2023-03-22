@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace ZFY.ChatGpt
 {
@@ -13,9 +9,6 @@ namespace ZFY.ChatGpt
     {
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            request.Headers.Add("Accept", "application/json");
-            request.Headers.Add("Authorization", $"Bearer {Constants.ApiKey}");
-
             return await base.SendAsync(request, cancellationToken);
         }
     }

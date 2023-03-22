@@ -9,36 +9,36 @@ namespace ZFY.ChatGpt
     /// <summary>
     /// 全局静态变量
     /// </summary>
-    public static class Constants
+    public class ChatOption
     {
         /// <summary>
         ///
         /// </summary>
-        public static string ChatModel { get; set; } = "";
+        public string ChatModel { get; set; } = "gpt-3.5-turbo";
 
         /// <summary>
         ///
         /// </summary>
-        public static string ApiKey { get; set; } = "";
+        public string ApiKey { get; set; } = "";
 
         /// <summary>
         /// 连接超时时间,单位秒
         /// </summary>
-        public static int Timeout { get; set; } = 30;
+        public int Timeout { get; set; } = 30;
 
         /// <summary>
         ///
         /// </summary>
-        public static bool IsProxy { get; set; } = false;
+        public bool IsProxy { get; set; } = false;
 
         /// <summary>
         ///
         /// </summary>
-        public static string ProxyAddress { get; set; } = "";
+        public string ProxyAddress { get; set; } = "";
 
         /// <summary>
         ///
         /// </summary>
-        public static int ProxyPort { get; set; }
+        public int ProxyPort { get; set; }
     }
 }

@@ -5,6 +5,16 @@ namespace ZIFEIYU.util
 {
     public class HttpHelper
     {
+        private static IHttpClientFactory? _httpClientFactory;
+
+        public static IHttpClientFactory httpClientFactory
+        {
+            get
+            {
+                return _httpClientFactory ??= Common.ServiceProvider.GetService<IHttpClientFactory>()!;
+            }
+        }
+
         /// <summary>
         /// 发起POST同步请求
         /// </summary>
@@ -16,22 +26,20 @@ namespace ZIFEIYU.util
         public static string HttpPost(string url, string postData = null, string contentType = "application/json", int timeOut = 30, Dictionary<string, string> headers = null)
         {
             postData ??= "";
-            using (HttpClient client = new HttpClient())
+            HttpClient client = httpClientFactory.CreateClient();
+            if (headers != null)
             {
-                if (headers != null)
-                {
-                    foreach (var header in headers)
-                        client.DefaultRequestHeaders.Add(header.Key, header.Value);
-                }
-                using (HttpContent httpContent = new StringContent(postData, Encoding.UTF8))
-                {
-                    if (contentType != null)
-                        httpContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(contentType);
+                foreach (var header in headers)
+                    client.DefaultRequestHeaders.Add(header.Key, header.Value);
+            }
+            using (HttpContent httpContent = new StringContent(postData, Encoding.UTF8))
+            {
+                if (contentType != null)
+                    httpContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(contentType);
 
-                    HttpResponseMessage response = client.PostAsync(url, httpContent).Result;
-                    var code = ((int)response.StatusCode);
-                    return response.Content.ReadAsStringAsync().Result;
-                }
+                HttpResponseMessage response = client.PostAsync(url, httpContent).Result;
+                var code = ((int)response.StatusCode);
+                return response.Content.ReadAsStringAsync().Result;
             }
         }
 
@@ -46,24 +54,65 @@ namespace ZIFEIYU.util
         public static async Task<string> HttpPostAsync(string url, string postData = null, string contentType = "application/json", int timeOut = 30, Dictionary<string, string> headers = null)
         {
             postData ??= "";
-            using (HttpClient client = new HttpClient())
+            HttpClient client = httpClientFactory.CreateClient();
+            client.Timeout = new TimeSpan(0, 0, timeOut);
+            if (headers != null)
             {
-                client.Timeout = new TimeSpan(0, 0, timeOut);
-                if (headers != null)
-                {
-                    foreach (var header in headers)
-                        client.DefaultRequestHeaders.Add(header.Key, header.Value);
-                }
-                using (HttpContent httpContent = new StringContent(postData, Encoding.UTF8))
-                {
-                    if (contentType != null)
-                        httpContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(contentType);
-
-                    HttpResponseMessage response = await client.PostAsync(url, httpContent);
-
-                    return await response.Content.ReadAsStringAsync();
-                }
+                foreach (var header in headers)
+                    client.DefaultRequestHeaders.Add(header.Key, header.Value);
             }
+            using (HttpContent httpContent = new StringContent(postData, Encoding.UTF8))
+            {
+                if (contentType != null)
+                    httpContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(contentType);
+
+                HttpResponseMessage response = await client.PostAsync(url, httpContent);
+
+                return await response.Content.ReadAsStringAsync();
+            }
+        }
+
+        /// <summary>
+        ///发起GET同步请求
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="contentType"></param>
+        /// <param name="headers"></param>
+        /// <returns>状态码和返回数据</returns>
+        public static string HttpGet(string url, string contentType = "application/json", Dictionary<string, string> headers = null)
+        {
+            HttpClient client = httpClientFactory.CreateClient();
+            if (contentType != null)
+                client.DefaultRequestHeaders.Add("ContentType", contentType);
+            if (headers != null)
+            {
+                foreach (var header in headers)
+                    client.DefaultRequestHeaders.Add(header.Key, header.Value);
+            }
+            HttpResponseMessage response = client.GetAsync(url).Result;
+            return response.Content.ReadAsStringAsync().Result;
+        }
+
+        /// <summary>
+        /// 发起GET异步请求
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="headers"></param>
+        /// <param name="contentType"></param>
+        /// <returns></returns>
+        public static async Task<string> HttpGetAsync(string url, string contentType = "application/json", Dictionary<string, string> headers = null)
+        {
+            HttpClient client = httpClientFactory.CreateClient();
+            if (contentType != null)
+                client.DefaultRequestHeaders.Add("ContentType", contentType);
+            if (headers != null)
+            {
+                foreach (var header in headers)
+                    client.DefaultRequestHeaders.Add(header.Key, header.Value);
+            }
+
+            HttpResponseMessage response = await client.GetAsync(url);
+            return await response.Content.ReadAsStringAsync();
         }
 
         /// <summary>
@@ -91,53 +140,6 @@ namespace ZIFEIYU.util
         {
             var res = await HttpPostAsync(url, postData, contentType, timeOut, headers);
             return res.ToEntity<T>();
-        }
-
-        /// <summary>
-        ///发起GET同步请求
-        /// </summary>
-        /// <param name="url"></param>
-        /// <param name="contentType"></param>
-        /// <param name="headers"></param>
-        /// <returns>状态码和返回数据</returns>
-        public static string HttpGet(string url, string contentType = "application/json", Dictionary<string, string> headers = null)
-        {
-            using (HttpClient client = new HttpClient())
-            {
-                if (contentType != null)
-                    client.DefaultRequestHeaders.Add("ContentType", contentType);
-                if (headers != null)
-                {
-                    foreach (var header in headers)
-                        client.DefaultRequestHeaders.Add(header.Key, header.Value);
-                }
-                HttpResponseMessage response = client.GetAsync(url).Result;
-                return response.Content.ReadAsStringAsync().Result;
-            }
-        }
-
-        /// <summary>
-        /// 发起GET异步请求
-        /// </summary>
-        /// <param name="url"></param>
-        /// <param name="headers"></param>
-        /// <param name="contentType"></param>
-        /// <returns></returns>
-        public static async Task<string> HttpGetAsync(string url, string contentType = "application/json", Dictionary<string, string> headers = null)
-        {
-            using (HttpClient client = new HttpClient())
-            {
-                if (contentType != null)
-                    client.DefaultRequestHeaders.Add("ContentType", contentType);
-                if (headers != null)
-                {
-                    foreach (var header in headers)
-                        client.DefaultRequestHeaders.Add(header.Key, header.Value);
-                }
-
-                HttpResponseMessage response = await client.GetAsync(url);
-                return await response.Content.ReadAsStringAsync();
-            }
         }
 
         /// <summary>

@@ -18,6 +18,13 @@ namespace ZFY.ChatGpt
     {
         public static IServiceCollection AddChatGPT(this IServiceCollection services)
         {
+            return AddChatGPT(services, null);
+        }
+
+        public static IServiceCollection AddChatGPT(this IServiceCollection services, ChatOption? chatOption)
+        {
+            chatOption ??= new ChatOption();
+            services.AddSingleton(chatOption);
             services.AddHttpClient("ChatGPT", config =>
             {
                 config.BaseAddress = new Uri("https://api.openai.com");
@@ -26,11 +33,9 @@ namespace ZFY.ChatGpt
             .ConfigurePrimaryHttpMessageHandler(() =>
             {
                 var handler = new HttpClientHandler();
-                if (Constants.IsProxy)
+                if (chatOption.IsProxy)
                 {
-                    handler.Proxy = new WebProxy(Constants.ProxyAddress == string.Empty ? "127.0.0.1" : Constants.ProxyAddress, Constants.ProxyPort);
-                    //handler.UseDefaultCredentials = false;
-                    //handler.Credentials = new NetworkCredential("", "");
+                    handler.Proxy = new WebProxy(chatOption.ProxyAddress == string.Empty ? "127.0.0.1" : chatOption.ProxyAddress, chatOption.ProxyPort);
                     handler.UseProxy = true;
                 };
                 return handler;
@@ -38,6 +43,7 @@ namespace ZFY.ChatGpt
             );
             services.AddSingleton<OpenAiHttpClientFactory>();
             services.AddSingleton<ChatServices>();
+            ChatServiceProvider.ServiceProvider = services.BuildServiceProvider();
             return services;
         }
 
@@ -49,6 +55,20 @@ namespace ZFY.ChatGpt
             }
 
             return factory.CreateClient("ChatGPT");
+        }
+    }
+
+    public static class ChatServiceProvider
+    {
+        private static ServiceProvider serviceProvider;
+
+        public static ServiceProvider ServiceProvider
+        {
+            get { return serviceProvider; }
+            set
+            {
+                serviceProvider ??= value;
+            }
         }
     }
 }

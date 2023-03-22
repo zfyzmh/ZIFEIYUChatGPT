@@ -22,12 +22,11 @@ window.IsMobileDevice = () => {
         // 移动端
         return true;
     }
-}; 
+};
 
 //清空输入框
 window.ClearInput = (InputId) => {
-    document.querySelector("#" + InputId).value = "";
-    /*if (!(document.querySelector("#" + InputId)) ) {
+    if (!(document.querySelector("#" + InputId))) {
         document.querySelector("#" + InputId).value = "";
-    }*/
+    }
 };

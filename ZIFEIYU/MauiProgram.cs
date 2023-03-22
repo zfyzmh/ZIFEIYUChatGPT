@@ -15,18 +15,20 @@ public static class MauiProgram
 {
     public static MauiApp CreateMauiApp()
     {
+        AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+        AppDomain.CurrentDomain.FirstChanceException += OnFirstChanceException;
+
         var builder = MauiApp.CreateBuilder();
         builder
-            .UseMauiApp<App>()
-            .ConfigureFonts(fonts =>
-            {
-                fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-            });
+        .UseMauiApp<App>()
+        .ConfigureFonts(fonts =>
+        {
+            fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+        });
         ConfigureServices(builder.Services);
         Common.ServiceProvider = builder.Services.BuildServiceProvider();
         Common.ServiceProvider.GetService<ZFYDatabase>()!.Init();
-        AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
-        AppDomain.CurrentDomain.FirstChanceException += OnFirstChanceException;
+
         return builder.Build();
 
         void ConfigureServices(IServiceCollection services)
@@ -41,11 +43,11 @@ public static class MauiProgram
             services.AddSingleton<ZFYDatabase>();
             services.AddSingleton<ChatDao>();
 
-            services.AddSingleton<JsCommon>();
             //批量注入服务
             var servicesTypes = Assembly.GetExecutingAssembly().GetTypes().Where(m => m.Namespace == "ZIFEIYU.Services" & m.IsClass & m.IsVisible).ToArray();
+
             services.AddChatGPT();
-            //services.AddSingleton<ChatServices>();
+
             foreach (var servicesType in servicesTypes) { services.AddSingleton(servicesType); }
         }
     }

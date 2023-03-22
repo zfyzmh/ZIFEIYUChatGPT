@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System.Net;
 
 namespace ZFY.ChatGpt
 {
@@ -26,12 +27,9 @@ namespace ZFY.ChatGpt
         public HttpClient CreateClient(string name)
         {
             var client = _httpClientFactory.CreateClient(name);
-            client.Timeout = TimeSpan.FromSeconds(Constants.Timeout);
-            /*new HttpClientHandler()
-            {
-                Proxy = new WebProxy(Constants.ProxyAddress == string.Empty ? "127.0.0.1" : Constants.ProxyAddress, Constants.ProxyPort),
-                UseProxy = Constants.IsProxy
-            }*/
+            client.Timeout = TimeSpan.FromSeconds(ChatServiceProvider.ServiceProvider.GetService<ChatOption>()!.Timeout);
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {ChatServiceProvider.ServiceProvider.GetService<ChatOption>()!.ApiKey}");
             return client;
         }
     }

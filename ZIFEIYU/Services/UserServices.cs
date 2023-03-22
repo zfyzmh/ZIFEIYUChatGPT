@@ -1,31 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MudBlazor;
+using ZFY.ChatGpt;
 using ZIFEIYU.DataBase;
 using ZIFEIYU.Entity;
-using ChatConstants = ZFY.ChatGpt.Constants;
 
 namespace ZIFEIYU.Services
 {
     public class UserServices
     {
         private readonly ZFYDatabase database;
+        private readonly ChatOption chatOption;
 
-        public UserServices(ZFYDatabase database)
+        public UserServices(ZFYDatabase database, ChatOption chatOption)
         {
             this.database = database;
+            this.chatOption = chatOption;
         }
 
         public Task UpdateConfig(UserConfig userConfig)
         {
-            ChatConstants.ChatModel = userConfig.ChatModel;
-            ChatConstants.Timeout = userConfig.Timeout;
-            ChatConstants.IsProxy = userConfig.IsProxy;
-            ChatConstants.ProxyAddress = userConfig.ProxyAddress;
-            ChatConstants.ProxyPort = userConfig.ProxyPort;
-            ChatConstants.ApiKey = userConfig.ApiKey;
+            chatOption.ChatModel = userConfig.ChatModel;
+            chatOption.Timeout = userConfig.Timeout;
+            chatOption.IsProxy = userConfig.IsProxy;
+            chatOption.ProxyAddress = userConfig.ProxyAddress;
+            chatOption.ProxyPort = userConfig.ProxyPort;
+            chatOption.ApiKey = userConfig.ApiKey;
             return database.Database.UpdateAsync(userConfig);
         }
 
