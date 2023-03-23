@@ -17,7 +17,7 @@ namespace ZIFEIYU.Entity
 
         public string ChatModel { get; set; } = "gpt-3.5-turbo";
 
-        public string ApiKey { get; set; } = "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";
+        public string ApiKey { get; set; } = "";
 
         public int Timeout { get; set; } = 35;
 
