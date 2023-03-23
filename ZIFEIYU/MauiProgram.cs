@@ -3,7 +3,6 @@ using Microsoft.Maui.Controls;
 using MudBlazor.Services;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
-using Titanium.Web.Proxy;
 using ZFY.ChatGpt;
 using ZFY.ChatGpt.Services;
 using ZIFEIYU.Dao;
@@ -33,16 +32,10 @@ public static class MauiProgram
 
         InitProxy();
 
-
-
-
         return builder.Build();
 
         void ConfigureServices(IServiceCollection services)
         {
-
-
-            var proxyServer = new ProxyServer();
             services.AddHttpClient();
             services.AddMauiBlazorWebView();
 #if DEBUG
@@ -64,7 +57,6 @@ public static class MauiProgram
 
     private static void InitProxy()
     {
-
     }
 
     private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)

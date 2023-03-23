@@ -58,6 +58,16 @@ namespace ZIFEIYU.Pages
                 if (!_isDispose) await jSRuntime.InvokeAsync<Task>("UpdateScroll", "IndexBody");
                 StateHasChanged();
                 await ChatGPTServices.SaveChat(Messages, ChatId);
+                if (ChatId == 0)
+                {
+                    ChatEntity chat = await ChatGPTServices.GetChatCurrent();
+                    if (chat != null)
+                    {
+                        ChatId = chat.Id;
+                        ChatTheme = chat.Theme;
+                        Messages = await JsonHelper.DeserializeJsonToListAsync<ChatMessage>(chat.DialogJson);
+                    }
+                }
             }
         }
 

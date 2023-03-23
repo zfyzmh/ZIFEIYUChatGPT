@@ -1,5 +1,4 @@
 ﻿using MudBlazor;
-using ZFY.ChatGpt;
 using ZIFEIYU.DataBase;
 using ZIFEIYU.Entity;
 
@@ -8,9 +7,9 @@ namespace ZIFEIYU.Services
     public class UserServices
     {
         private readonly ZFYDatabase database;
-        private readonly ChatOption chatOption;
+        private readonly ZFY.ChatGpt.ChatOption chatOption;
 
-        public UserServices(ZFYDatabase database, ChatOption chatOption)
+        public UserServices(ZFYDatabase database, ZFY.ChatGpt.ChatOption chatOption)
         {
             this.database = database;
             this.chatOption = chatOption;

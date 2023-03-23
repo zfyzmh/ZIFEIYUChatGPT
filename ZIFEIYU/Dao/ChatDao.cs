@@ -42,13 +42,18 @@ namespace ZIFEIYU.Dao
 
         public async Task<int> SaveChat(ChatEntity chatEntity)
         {
+
+            var test=await  GetAllChat();
+
             if (chatEntity.Id <= 0)
             {
-                return await _database.InsertAsync(chatEntity);
+                return await _database.InsertAsync(chatEntity, chatEntity.GetType());
             }
             else
             {
-                return await _database.UpdateAsync(chatEntity);
+                var chat = await _database.Table<ChatEntity>().Where(m => m.Id == chatEntity.Id).FirstAsync();
+                chat.DialogJson = chatEntity.DialogJson;
+                return await _database.UpdateAsync(chat);
             }
         }
 

@@ -62,7 +62,7 @@ namespace ZFY.ChatGpt.Dto.InputDto
         /// 请求消耗的最大代币数,
         /// </summary>
         [JsonProperty("max_tokens")]
-        public int? MaxTokens { get; set; } 
+        public int? MaxTokens { get; set; }
 
         /// <summary>
         /// 介于-0.2至0.2之间,正值增加讨论新主题的可能
