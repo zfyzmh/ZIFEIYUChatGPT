@@ -3,7 +3,7 @@
 受启发于 川虎chatgpt
 https://github.com/GaiZhenbiao/ChuanhuChatGPT
 
-本项目提供开源的cahtgppt访问应用,支持安卓端和windows端,网络环境及其他配置请参考川虎chatgpt及其他up主提供的方案这里不做详解
+本项目提供开源的cahtgppt访问应用,支持安卓端和windows端(win10以上),网络环境及其他配置请参考川虎chatgpt及其他up主提供的方案这里不做详解
 
 
 ### 常见问题
