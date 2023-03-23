@@ -64,7 +64,7 @@ namespace ZIFEIYU.Services
                 message.Content += item;
                 eventHandler.Invoke(this, chatInput.Messages);
 
-                if (speed > 0) await Task.Delay(speed); speed--;
+                if (speed > 15) await Task.Delay(speed); speed--;
             }
             return;
         }

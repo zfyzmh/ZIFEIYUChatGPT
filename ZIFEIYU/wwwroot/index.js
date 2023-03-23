@@ -1,7 +1,9 @@
 ﻿//滚动到底部
 window.UpdateScroll = (divId) => {
     var element = document.getElementById(divId);
-    element.scrollTop = element.scrollHeight;
+    if (element) {
+        element.scrollTop = element.scrollHeight;
+    }
 };
 
 //获取是否移动端

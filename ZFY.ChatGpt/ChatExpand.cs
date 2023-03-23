@@ -53,7 +53,6 @@ namespace ZFY.ChatGpt
             {
                 throw new ArgumentNullException(nameof(factory));
             }
-
             return factory.CreateClient("ChatGPT");
         }
     }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using MudBlazor;
 using ZFY.ChatGpt.Dto;
 using ZFY.ChatGpt.Dto.InputDto;
@@ -11,13 +12,14 @@ using ZIFEIYU.util;
 
 namespace ZIFEIYU.Pages
 {
-    public partial class Chat
+    public partial class Chat : IDisposable
     {
         public bool _processing = false;
 
-        [Inject]
-        public ChatGPTServices ChatGPTServices { get; set; }
+        private bool _isDispose = false;
+        [Inject] public ChatGPTServices ChatGPTServices { get; set; }
 
+        [Inject] public IJSRuntime jSRuntime { get; set; }
         public MudTextField<string> TextField { get; set; }
         public string ChatTheme { get; set; }
 
@@ -46,10 +48,14 @@ namespace ZIFEIYU.Pages
             {
                 Messages.Add(new ChatMessage() { Role = "user", Content = HelperText });
                 await TextField.Clear();
+                // await jSRuntime.InvokeAsync<Task>("ClearInput", "HelperText");
+                await jSRuntime.InvokeAsync<Task>("UpdateScroll", "IndexBody");
                 _processing = true;
                 StateHasChanged();
                 await ChatGPTServices.SendChat(new InChat(Messages), DialogEvent);
                 _processing = false;
+                // await jSRuntime.InvokeAsync<Task>("ClearInput", "HelperText");
+                if (!_isDispose) await jSRuntime.InvokeAsync<Task>("UpdateScroll", "IndexBody");
                 StateHasChanged();
                 await ChatGPTServices.SaveChat(Messages, ChatId);
             }
@@ -75,6 +81,11 @@ namespace ZIFEIYU.Pages
             {
                 await Send();
             };
+        }
+
+        public void Dispose()
+        {
+            _isDispose = true;
         }
     }
 }

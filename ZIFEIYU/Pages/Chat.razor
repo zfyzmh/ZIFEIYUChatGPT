@@ -31,7 +31,7 @@
                 </ContentTemplate>
             </SpinLoader>
         </div>
-        <MudTextField id="HelperText" Immediate="false" @ref="TextField"  OnKeyPress="KeyDown" T="string" Style="height:45px;" Variant="Variant.Filled" @bind-Value="HelperText" />
+        <MudTextField id="HelperText" Immediate="true" @ref="TextField"  OnKeyPress="KeyDown" T="string" Style="height:45px;" Variant="Variant.Filled" @bind-Value="HelperText" />
         <div style="margin-left:10px;">
             <MudFab Size="Size.Small" OnClick="@Send" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Send" Disabled="_processing">
             </MudFab>
