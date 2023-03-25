@@ -1,5 +1,7 @@
-﻿using System.Net;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System.Net;
 using System.Text;
+using System.Threading;
 using ZFY.ChatGpt.Dto;
 using ZFY.ChatGpt.Dto.InputDto;
 using ZFY.ChatGpt.Dto.OutDto;
@@ -126,10 +128,10 @@ namespace ZFY.ChatGpt.Services
 
         public async Task<OutChat> SendChat(InChat chatInput)
         {
+            chatInput.Stream = false;
+            HttpClient client = _httpClientFactory.CreateClient();
             try
             {
-                chatInput.Stream = false;
-                HttpClient client = _httpClientFactory.CreateClient();
                 using (HttpContent httpContent = new StringContent(JsonHelper.SerializeObject(chatInput), Encoding.UTF8, "application/json"))
                 {
                     HttpResponseMessage response = await client.PostAsync("/v1/chat/completions", httpContent);
@@ -151,12 +153,13 @@ namespace ZFY.ChatGpt.Services
             }
             catch (TaskCanceledException)
             {
-                string errprMessage = "网络连接超时,请尝试以下方法解决\r\n" +
+                string errprMessage = "网络连接超时,或请求已取消,请尝试以下方法解决\r\n" +
                     "1.检查网络设置\r\n" +
                     "2.设置更大的容忍超时时长\r\n" +
                     "3.在chatgpt访问量更少时使用";
-                ;
+
                 var msg = new ChatMessage() { Role = "assistant", Content = errprMessage };
+
                 return new OutChat() { Choices = new Choice[] { new Choice() { Message = msg } } };
             }
             catch (Exception ex)

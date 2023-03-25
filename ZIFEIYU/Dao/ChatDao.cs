@@ -20,14 +20,14 @@ namespace ZIFEIYU.Dao
         }
 
         /// <summary>
-        /// 获取对话列表倒序
+        /// 获取对话列表以更新时间倒序,分页,
         /// </summary>
         /// <param name="pageSize"></param>
         /// <param name="pageNumber"></param>
         /// <returns></returns>
         public async Task<List<ChatEntity>> GetChatListDesc(int pageSize, int pageNumber)
         {
-            return await _database.Table<ChatEntity>().OrderByDescending(s => s.Id).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+            return await _database.Table<ChatEntity>().Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
         }
 
         public async Task<ChatEntity> GetChatById(int id)
@@ -35,16 +35,8 @@ namespace ZIFEIYU.Dao
             return await _database.Table<ChatEntity>().Where(m => m.Id == id).FirstOrDefaultAsync();
         }
 
-        public async Task<int> CreateChat(ChatEntity chatEntity)
-        {
-            return await _database.InsertAsync(chatEntity);
-        }
-
         public async Task<int> SaveChat(ChatEntity chatEntity)
         {
-
-            var test=await  GetAllChat();
-
             if (chatEntity.Id <= 0)
             {
                 return await _database.InsertAsync(chatEntity, chatEntity.GetType());
@@ -53,6 +45,7 @@ namespace ZIFEIYU.Dao
             {
                 var chat = await _database.Table<ChatEntity>().Where(m => m.Id == chatEntity.Id).FirstAsync();
                 chat.DialogJson = chatEntity.DialogJson;
+                chat.UpdateDate = DateTime.Now;
                 return await _database.UpdateAsync(chat);
             }
         }
@@ -63,20 +56,20 @@ namespace ZIFEIYU.Dao
         /// <returns></returns>
         public async Task<ChatEntity> GetChatCurrent()
         {
-            var count = await _database.Table<ChatEntity>().CountAsync();
-            return await _database.Table<ChatEntity>().Skip(count - 1).FirstOrDefaultAsync();
+            return await _database.Table<ChatEntity>().OrderByDescending(m => m.UpdateDate).FirstOrDefaultAsync();
         }
 
-        /// <summary>
-        /// 切换聊天
-        /// </summary>
-        /// <returns></returns>
-        public async Task<ChatEntity> SwitchChat(ChatEntity chat)
+        public async Task DeleteChat(long chatId)
         {
-            var count = await _database.Table<ChatEntity>().DeleteAsync(e => e.Id == chat.Id);
-            chat.Id = 0;
-            await SaveChat(chat);
-            return chat;
+            await _database.DeleteAsync<ChatEntity>(chatId);
+        }
+
+        public async Task DeleteChat(long[] chatIds)
+        {
+            foreach (var chatId in chatIds)
+            {
+                await _database.DeleteAsync<ChatEntity>(chatId);
+            }
         }
     }
 }

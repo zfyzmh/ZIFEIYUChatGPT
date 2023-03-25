@@ -25,11 +25,14 @@ namespace ZFY.ChatGpt
         {
             chatOption ??= new ChatOption();
             services.AddSingleton(chatOption);
+            var chatHttpHandler = new ChatHttpHandler();
+            services.AddSingleton(chatHttpHandler);
+
             services.AddHttpClient("ChatGPT", config =>
             {
                 config.BaseAddress = new Uri("https://api.openai.com");
             })
-            .AddHttpMessageHandler(hander => new ChatHttpHandler())
+            .AddHttpMessageHandler(hander => chatHttpHandler)
             .ConfigurePrimaryHttpMessageHandler(() =>
             {
                 var handler = new HttpClientHandler();
@@ -37,7 +40,7 @@ namespace ZFY.ChatGpt
                 {
                     handler.Proxy = new WebProxy(chatOption.ProxyAddress == string.Empty ? "127.0.0.1" : chatOption.ProxyAddress, chatOption.ProxyPort);
                     handler.UseProxy = true;
-                };
+                }
                 return handler;
             }
             );

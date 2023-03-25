@@ -1,41 +1,40 @@
 ﻿.main {
-    height: 90vh;
-    display: grid;
-    grid-template-columns: auto;
-    grid-template-rows: 1fr 120px;
+  height: 90vh;
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: 1fr 80px;
+}
+.main .body {
+  overflow-y: scroll;
+}
+.main .body::-webkit-scrollbar {
+  display: none; /* Chrome Safari */
+}
+.main .bottom {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 1.5rem;
+}
+.main ::deep .mud-icon-button.mud-button {
+  border-radius: 50% !important;
 }
 
-    .main .body {
-        overflow-y: scroll;
-    }
-
-        .main .body::-webkit-scrollbar {
-            display: none; /* Chrome Safari */
-        }
-
-    .main .bottom {
-        display: flex;
-        justify-content: center;
-        align-items: end;
-        padding-bottom: 1.5rem;
-    }
-
 @media (min-width: 641px) {
-    .main {
-        height: 100vh;
-        display: grid;
-        grid-template-columns: auto;
-        grid-template-rows: 1fr 120px;
-    }
-
-        .main .body {
-            color: #7767ff;
-        }
-
-        .main .bottom {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding-bottom: 0;
-        }
+  .main {
+    margin-top: 0;
+    height: 95vh;
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: 1fr 80px;
+  }
+  .main .body {
+    color: #7767ff;
+  }
+  .main .bottom {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 0;
+  }
 }

@@ -7,9 +7,19 @@ namespace ZFY.ChatGpt
     /// </summary>
     public class ChatHttpHandler : DelegatingHandler
     {
+        private CancellationTokenSource? tokenSource;
+
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            return await base.SendAsync(request, cancellationToken);
+            tokenSource ??= new CancellationTokenSource();
+
+            return await base.SendAsync(request, tokenSource.Token);
+        }
+
+        public async Task Cancel()
+        {
+            tokenSource ??= new CancellationTokenSource();
+            tokenSource.Cancel(); tokenSource.Dispose(); tokenSource = null;
         }
     }
 }

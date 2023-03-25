@@ -11,6 +11,7 @@ namespace ZIFEIYU.Services
 {
     public class ChatGPTServices
     {
+        public bool IsManualCancellation;
         private Dictionary<string, string> Headers = new Dictionary<string, string>();
 
         public event EventHandler<List<ChatMessage>> StartPublishPaper;
@@ -41,7 +42,7 @@ namespace ZIFEIYU.Services
             chatEntity.UpdateDate = DateTime.Now;
             chatEntity.Id = id;
             chatEntity.DialogJson = JsonHelper.SerializeObject(messages);
-            chatEntity.Theme ??= messages.First().Content;
+            chatEntity.Theme ??= messages.First(m=>m.Role=="user").Content;
             await _dao.SaveChat(chatEntity);
         }
 
@@ -56,6 +57,8 @@ namespace ZIFEIYU.Services
             OutChat outChat = await chatServices.SendChat(chatInput);
             var chatmessagee = outChat.Choices[0].Message;
 
+            if (IsManualCancellation) return;
+
             ChatMessage message = new ChatMessage("assistant");
             chatInput.Messages.Add(message);
 
@@ -64,9 +67,34 @@ namespace ZIFEIYU.Services
                 message.Content += item;
                 eventHandler.Invoke(this, chatInput.Messages);
 
-                if (speed > 15) await Task.Delay(speed); speed--;
+                if (speed >= 4) await Task.Delay(speed); speed -= 2;
             }
             return;
+        }
+
+        public async Task<List<ChatEntity>> InitHistory()
+        {
+            return (await _dao.GetAllChat()).OrderByDescending(m => m.UpdateDate).ToList();
+        }
+
+        /// <summary>
+        /// 清理本地对话,保留十条最近的
+        /// </summary>
+        /// <returns></returns>
+        public async Task ClearHistoryChat()
+        {
+            long[] clearIds = (await _dao.GetAllChat()).OrderByDescending(m => m.UpdateDate).Select(m => m.Id).ToArray();
+
+            if (clearIds.Length > 10)
+            {
+                long[] clearIdss = clearIds.Skip(10).ToArray();
+                await _dao.DeleteChat(clearIdss);
+            }
+        }
+
+        public async Task DeleteChat(long chatId)
+        {
+            await _dao.DeleteChat(chatId);
         }
     }
 }

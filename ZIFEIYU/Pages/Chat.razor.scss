@@ -2,8 +2,7 @@
     height: 90vh;
     display: grid;
     grid-template-columns: auto;
-    grid-template-rows: 1fr 120px;
-    margin-top: 3rem;
+    grid-template-rows: 1fr 80px;
 
     .body {
         overflow-y: scroll;
@@ -16,18 +15,24 @@
     .bottom {
         display: flex;
         justify-content: center;
-        align-items: end;
+        align-items: center;
         padding-bottom: 1.5rem;
+    }
+
+    ::deep {
+        .mud-icon-button.mud-button {
+            border-radius: 50% !important;
+        }
     }
 }
 
 @media (min-width: 641px) {
     .main {
         margin-top: 0;
-        height: 100vh;
+        height: 95vh;
         display: grid;
         grid-template-columns: auto;
-        grid-template-rows: 1fr 120px;
+        grid-template-rows: 1fr 80px;
 
         .body {
             color: #7767ff;

@@ -6,35 +6,73 @@
 <div class="main">
     <div  id="IndexBody" class="body">
         <div style="position:absolute;opacity:0.7">
-            <MudMenu  Dense="true" Icon="@Icons.Material.Outlined.AccessTime" Color="Color.Primary" Size="Size.Medium" ActivationEvent="@MouseEvent.MouseOver">
+            <MudMenu MaxHeight="250" Dense="true" Icon="@Icons.Material.Outlined.AccessTime" Color="Color.Primary" Size="Size.Medium" ActivationEvent="@MouseEvent.MouseOver">
                 <ChildContent >
-
-                    <MudMenuItem >Profile</MudMenuItem>
-                    <MudMenuItem>Theme</MudMenuItem>
-                    <MudMenuItem>Usage</MudMenuItem>
-                    <MudMenuItem>Sign Out</MudMenuItem>
-                   
+                    <MudMenuItem OnClick="ClearHistoryChat">清空对话(保存最近的10条)</MudMenuItem>
+                    @foreach (var item in chatEntities)
+                    {
+                        <MudMenuItem OnClick="async ()=>{  await SwitchChat(item.Id);}">@item.Theme</MudMenuItem>
+                    }
                 </ChildContent>
             </MudMenu>
         </div>
         
         <Dialogue IsCodeOver="_processing" Messages="Messages"></Dialogue>
+
+        
     </div>
     <div class="bottom">
-        <div style="margin-right:5px;">
+        <div style="margin-right:5px; display:flex; align-items: center;">
+            <MudMenu Disabled="_processing" Dense="true" Style="margin-right:5px; border-radius: 50% !important;" Variant="Variant.Filled" Icon="@Icons.Material.Filled.MoreHoriz" Color="Color.Primary" Size="Size.Large" ActivationEvent="@MouseEvent.LeftClick">
+                <ChildContent>
+                    <MudMenuItem OnClick="DeleteChat">删除对话</MudMenuItem>
+                    <MudMenuItem OnClick="()=>{PrepositiveVisible=true;}">前置语句</MudMenuItem>
+                    <MudMenuItem OnClick="Retry">重试</MudMenuItem>
+                    <MudMenuItem>Sign Out</MudMenuItem>
+                </ChildContent>
+            </MudMenu>
             <SpinLoader IsLoading="_processing">
                 <LoadingTemplate>
-                    <Wave Color="#776be7" Center="true" />
+                        <Wave  Color="#776be7" Center="true" />
                 </LoadingTemplate>
                 <ContentTemplate>
-                    <MudFab OnClick="Reset" Size="Size.Small" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Refresh" />
+                    <MudFab  OnClick="Reset" Size="Size.Small" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Cached" />
                 </ContentTemplate>
             </SpinLoader>
         </div>
-        <MudTextField id="HelperText" Immediate="true" @ref="TextField"  OnKeyPress="KeyDown" T="string" Style="height:45px;" Variant="Variant.Filled" @bind-Value="HelperText" />
+        <MudTextField id="HelperText"  Clearable="true" Immediate="true" @ref="TextField" OnKeyPress="KeyDown" T="string" Style="height:45px;" Variant="Variant.Filled" @bind-Value="HelperText" />
         <div style="margin-left:10px;">
-            <MudFab Size="Size.Small" OnClick="@Send" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Send" Disabled="_processing">
-            </MudFab>
+            <SpinLoader IsLoading="_processing">
+                <LoadingTemplate>
+                    <MudFab Size="Size.Small" OnClick="@Stop" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Stop">
+                    </MudFab>
+                </LoadingTemplate>
+                <ContentTemplate>
+                    <MudTooltip Text="发送">
+                        <MudFab Size="Size.Small" OnClick="@Send" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Send" Disabled="_processing">
+                        </MudFab>
+                    </MudTooltip>
+                   
+                </ContentTemplate>
+            </SpinLoader>
+
         </div>
     </div>
 </div>
+
+
+<MudDialog @bind-IsVisible="PrepositiveVisible" Options="PrepositiveDialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-3" /> 前置设置
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudTextField @bind-Value="ChatPrepositive" HelperText="比如你可以说,你是一个乐于助人的助手" Variant="Variant.Filled" />
+        
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddPrepositive" Class="px-10">确定</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="()=>{PrepositiveVisible=false;}" Class="px-10">取消</MudButton>
+    </DialogActions>
+</MudDialog>
