@@ -16,3 +16,6 @@ windows 安装请参考此网站安装证书文件
 https://blog.csdn.net/qq_36237810/article/details/110238783
 
 后缀名msix是软件安装包
+
+![uTools_1679749446420](https://user-images.githubusercontent.com/96179195/227718834-bb960899-f788-4125-a39d-dab0c542f865.png)
+![uTools_1679749483706](https://user-images.githubusercontent.com/96179195/227718869-56c35381-b9ce-462e-9c8c-a3cbd034118b.png)
