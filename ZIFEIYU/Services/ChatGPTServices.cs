@@ -42,7 +42,7 @@ namespace ZIFEIYU.Services
             chatEntity.UpdateDate = DateTime.Now;
             chatEntity.Id = id;
             chatEntity.DialogJson = JsonHelper.SerializeObject(messages);
-            chatEntity.Theme ??= messages.First(m=>m.Role=="user").Content;
+            chatEntity.Theme ??= messages.First(m => m.Role == "user").Content;
             await _dao.SaveChat(chatEntity);
         }
 
@@ -75,6 +75,11 @@ namespace ZIFEIYU.Services
         public async Task<List<ChatEntity>> InitHistory()
         {
             return (await _dao.GetAllChat()).OrderByDescending(m => m.UpdateDate).ToList();
+        }
+
+        public async Task Stop()
+        {
+            chatServices.IsManualCancellation = true;
         }
 
         /// <summary>

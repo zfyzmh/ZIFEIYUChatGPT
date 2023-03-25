@@ -25,14 +25,14 @@ namespace ZFY.ChatGpt
         {
             chatOption ??= new ChatOption();
             services.AddSingleton(chatOption);
-            var chatHttpHandler = new ChatHttpHandler();
-            services.AddSingleton(chatHttpHandler);
+            //var chatHttpHandler = new ChatHttpHandler();
+            //services.AddSingleton(chatHttpHandler);
 
             services.AddHttpClient("ChatGPT", config =>
             {
                 config.BaseAddress = new Uri("https://api.openai.com");
             })
-            .AddHttpMessageHandler(hander => chatHttpHandler)
+            .AddHttpMessageHandler(hander => new ChatHttpHandler())
             .ConfigurePrimaryHttpMessageHandler(() =>
             {
                 var handler = new HttpClientHandler();

@@ -25,7 +25,6 @@ namespace ZIFEIYU.Pages
         [Inject] public ChatGPTServices ChatGPTServices { get; set; }
 
         [Inject] public IJSRuntime jSRuntime { get; set; }
-        [Inject] public ChatHttpHandler ChatHttpHandler { get; set; }
 
         public MudTextField<string> TextField { get; set; }
         public string ChatTheme { get; set; }
@@ -142,7 +141,7 @@ namespace ZIFEIYU.Pages
             if (lastMsg.Role == "user")
             {
                 ChatGPTServices.IsManualCancellation = true;
-                await ChatHttpHandler.Cancel();
+                await ChatGPTServices.Stop();
                 HelperText = lastMsg.Content;
                 Messages.Remove(lastMsg);
                 StateHasChanged();

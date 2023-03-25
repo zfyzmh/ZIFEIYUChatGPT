@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using System.Data;
 using System.Net;
 using System.Text;
 using System.Threading;
@@ -14,6 +15,8 @@ namespace ZFY.ChatGpt.Services
     public class ChatServices
     {
         private readonly OpenAiHttpClientFactory _httpClientFactory;
+
+        public bool IsManualCancellation;
 
         /// <summary>
         ///
@@ -128,13 +131,26 @@ namespace ZFY.ChatGpt.Services
 
         public async Task<OutChat> SendChat(InChat chatInput)
         {
+            IsManualCancellation = false;
             chatInput.Stream = false;
             HttpClient client = _httpClientFactory.CreateClient();
             try
             {
                 using (HttpContent httpContent = new StringContent(JsonHelper.SerializeObject(chatInput), Encoding.UTF8, "application/json"))
                 {
-                    HttpResponseMessage response = await client.PostAsync("/v1/chat/completions", httpContent);
+                    Task<HttpResponseMessage> taskResponse = client.PostAsync("/v1/chat/completions", httpContent);
+
+                    while (true)
+                    {
+                        await Task.Delay(100);
+                        if (taskResponse.IsCompleted) break;
+                        if (IsManualCancellation) return new OutChat()
+                        {
+                            Choices = new Choice[] { new Choice() { Message = new ChatMessage() { Role = "assistant", Content = "请求已取消" } } }
+                        };
+                    }
+
+                    var response = await taskResponse;
                     if (response.IsSuccessStatusCode)
                     {
                         return (await response.Content.ReadAsStringAsync()).ToEntity<OutChat>();
@@ -166,7 +182,7 @@ namespace ZFY.ChatGpt.Services
             {
                 string errprMessage = "网络连接失败,请检查网络配置!" +
                     "\r\n" + ex.Message + "\r\n";
-                ;
+
                 var msg = new ChatMessage() { Role = "assistant", Content = errprMessage };
                 return new OutChat() { Choices = new Choice[] { new Choice() { Message = msg } } };
             }
