@@ -2,6 +2,7 @@
 @page "/"
 @using System.Diagnostics;
 @using BlazorPro.Spinkit;
+@using ZIFEIYU.Dto;
 
 <div class="main">
     <div  id="IndexBody" class="body">
@@ -26,7 +27,7 @@
             <MudMenu Disabled="_processing" Dense="true" Style="margin-right:5px; border-radius: 50% !important;" Variant="Variant.Filled" Icon="@Icons.Material.Filled.MoreHoriz" Color="Color.Primary" Size="Size.Large" ActivationEvent="@MouseEvent.LeftClick">
                 <ChildContent>
                     <MudMenuItem OnClick="DeleteChat">删除对话</MudMenuItem>
-                    <MudMenuItem OnClick="()=>{PrepositiveVisible=true;}">前置语句</MudMenuItem>
+                    <MudMenuItem Disabled="Messages.Count>0" OnClick="()=>{PrepositiveVisible=true;}">前置语句</MudMenuItem>
                     <MudMenuItem OnClick="Retry">重试</MudMenuItem>
                     <MudMenuItem>Sign Out</MudMenuItem>
                 </ChildContent>
@@ -68,8 +69,14 @@
         </MudText>
     </TitleContent>
     <DialogContent>
-        <MudTextField @bind-Value="ChatPrepositive" HelperText="比如你可以说,你是一个乐于助人的助手" Variant="Variant.Filled" />
-        
+        <MudTextField Lines="5" @bind-Value="ChatPrepositive" HelperText="比如你可以说,你是一个乐于助人的助手" Variant="Variant.Filled" />
+        <MudSelect OnClearButtonClick="ClearPrepositive" ValueChanged="PrepositiveChanged" Clearable="true" Margin="Margin.Dense" T="Templates" Label="选择模板" Variant="Variant.Filled">
+            @foreach (var item in Templates)
+            {
+                <MudSelectItem Value="@item" />
+            }
+            
+        </MudSelect>
     </DialogContent>
     <DialogActions>
         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddPrepositive" Class="px-10">确定</MudButton>

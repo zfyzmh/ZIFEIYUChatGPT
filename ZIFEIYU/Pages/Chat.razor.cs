@@ -9,6 +9,7 @@ using ZFY.ChatGpt.Dto;
 using ZFY.ChatGpt.Dto.InputDto;
 using ZFY.ChatGpt.Services;
 using ZIFEIYU.DataBase;
+using ZIFEIYU.Dto;
 using ZIFEIYU.Entity;
 using ZIFEIYU.Global;
 using ZIFEIYU.Services;
@@ -35,6 +36,8 @@ namespace ZIFEIYU.Pages
 
         public List<ChatEntity> chatEntities { get; set; }
 
+        public List<Templates> Templates { get; set; }
+
         public long ChatId { get; set; }
 
         public bool PrepositiveVisible { get; set; }
@@ -44,6 +47,8 @@ namespace ZIFEIYU.Pages
 
         protected override async Task OnInitializedAsync()
         {
+            await InitTemplates();
+
             await InitHistory();
             ChatEntity chat = await ChatGPTServices.GetChatCurrent();
             if (chat != null)
@@ -59,6 +64,16 @@ namespace ZIFEIYU.Pages
         private async Task InitHistory()
         {
             chatEntities = await ChatGPTServices.InitHistory();
+        }
+
+        private async Task InitTemplates()
+        {
+            if (Templates != null) return;
+
+            using var stream = await FileSystem.OpenAppPackageFileAsync("Templates/Prompts.zh-an.json");
+            using var reader = new StreamReader(stream);
+            var contents = reader.ReadToEnd();
+            Templates = JsonHelper.DeserializeJsonToList<Templates>(contents);
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -105,6 +120,7 @@ namespace ZIFEIYU.Pages
             ChatPrepositive = string.Empty;
             ChatId = 0;
             Messages = new List<ChatMessage>();
+            ChatPrepositive = string.Empty;
             StateHasChanged();
         }
 
@@ -198,6 +214,17 @@ namespace ZIFEIYU.Pages
                 Messages.RemoveAt(Messages.Count - 1);
                 Messages.RemoveAt(Messages.Count - 1);
             }
+        }
+
+        public async Task PrepositiveChanged(Templates template)
+        {
+            if (template != null) ChatPrepositive = template.Prompt;
+        }
+
+        public async Task ClearPrepositive(MouseEventArgs eventArgs)
+        {
+            ChatPrepositive = string.Empty;
+            StateHasChanged();
         }
     }
 }

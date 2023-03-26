@@ -7,6 +7,7 @@ using ZFY.ChatGpt;
 using ZFY.ChatGpt.Services;
 using ZIFEIYU.Dao;
 using ZIFEIYU.DataBase;
+using ZIFEIYU.Dto;
 using ZIFEIYU.Global;
 using ZIFEIYU.Services;
 
@@ -30,8 +31,6 @@ public static class MauiProgram
         Common.ServiceProvider = builder.Services.BuildServiceProvider();
         Common.ServiceProvider.GetService<ZFYDatabase>()!.Init();
 
-        InitProxy();
-
         return builder.Build();
 
         void ConfigureServices(IServiceCollection services)
@@ -53,10 +52,6 @@ public static class MauiProgram
 
             foreach (var servicesType in servicesTypes) { services.AddSingleton(servicesType); }
         }
-    }
-
-    private static void InitProxy()
-    {
     }
 
     private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
