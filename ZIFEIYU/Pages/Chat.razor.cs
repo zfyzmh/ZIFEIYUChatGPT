@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using MudBlazor;
 using System.Linq;
+using System.Text;
 using ZFY.ChatGpt;
 using ZFY.ChatGpt.Dto;
 using ZFY.ChatGpt.Dto.InputDto;
@@ -71,9 +72,17 @@ namespace ZIFEIYU.Pages
             if (Templates != null) return;
 
             using var stream = await FileSystem.OpenAppPackageFileAsync("Templates/Prompts.zh-an.json");
+
             using var reader = new StreamReader(stream);
             var contents = reader.ReadToEnd();
             Templates = JsonHelper.DeserializeJsonToList<Templates>(contents);
+
+            /*StreamWriter streamWriter = new StreamWriter(stream);
+
+            // 使用 FileMode.Truncate 模式打开 StreamWriter
+            using StreamWriter writer = new StreamWriter(stream);
+            // 将文件截断或清空
+            writer.BaseStream.SetLength(0);*/
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
