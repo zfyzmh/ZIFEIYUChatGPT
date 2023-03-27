@@ -39,9 +39,13 @@ namespace ZIFEIYU.Pages
 
         public List<Templates> Templates { get; set; }
 
+        public Templates AddTemplates { get; set; } = new Templates();
+
         public long ChatId { get; set; }
 
         public bool PrepositiveVisible { get; set; }
+
+        public bool ADDPrepositiveVisible { get; set; }
         public string ChatPrepositive { get; set; }
 
         private DialogOptions PrepositiveDialogOptions = new() { FullWidth = true };
@@ -69,20 +73,11 @@ namespace ZIFEIYU.Pages
 
         private async Task InitTemplates()
         {
-            if (Templates != null) return;
-
             using var stream = await FileSystem.OpenAppPackageFileAsync("Templates/Prompts.zh-an.json");
 
             using var reader = new StreamReader(stream);
             var contents = reader.ReadToEnd();
             Templates = JsonHelper.DeserializeJsonToList<Templates>(contents);
-
-            /*StreamWriter streamWriter = new StreamWriter(stream);
-
-            // 使用 FileMode.Truncate 模式打开 StreamWriter
-            using StreamWriter writer = new StreamWriter(stream);
-            // 将文件截断或清空
-            writer.BaseStream.SetLength(0);*/
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -194,7 +189,7 @@ namespace ZIFEIYU.Pages
             StateHasChanged();
         }
 
-        public void AddPrepositive()
+        public void SavePrepositive()
         {
             if (Messages.Count > 0)
             {
@@ -228,6 +223,21 @@ namespace ZIFEIYU.Pages
         public async Task PrepositiveChanged(Templates template)
         {
             if (template != null) ChatPrepositive = template.Prompt;
+        }
+
+        public async Task AddPrepositive()
+        {
+            if (!string.IsNullOrWhiteSpace(AddTemplates.Act) && !string.IsNullOrWhiteSpace(AddTemplates.Prompt))
+            {
+                Templates.Insert(0, new Dto.Templates() { Act = AddTemplates.Act, Prompt = AddTemplates.Prompt });
+
+                string filepath = Path.Combine(FileSystem.AppDataDirectory, "Templates", "CustomTemplate.json");
+
+                await File.OpenWrite(filepath).WriteAsync(Encoding.UTF8.GetBytes(JsonHelper.SerializeObject(Templates)));
+
+                StateHasChanged();
+                AddTemplates = new Templates();
+            }
         }
 
         public async Task ClearPrepositive(MouseEventArgs eventArgs)

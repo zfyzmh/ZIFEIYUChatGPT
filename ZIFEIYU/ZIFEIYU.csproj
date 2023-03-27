@@ -75,6 +75,10 @@
     </ItemGroup>
 
     <ItemGroup>
+      <None Remove="resources\raw\Test.txt" />
+    </ItemGroup>
+
+    <ItemGroup>
       <None Include="compilerconfig.json" />
     </ItemGroup>
 

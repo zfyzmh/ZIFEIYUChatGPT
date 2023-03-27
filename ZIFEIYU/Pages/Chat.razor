@@ -70,17 +70,34 @@
     </TitleContent>
     <DialogContent>
         <MudTextField Lines="5" @bind-Value="ChatPrepositive" HelperText="比如你可以说,你是一个乐于助人的助手" Variant="Variant.Filled" />
-        <MudSelect OnClearButtonClick="ClearPrepositive" ValueChanged="PrepositiveChanged" Clearable="true" Margin="Margin.Dense" T="Templates" Label="选择模板" Variant="Variant.Filled">
+        <MudSelect OnClearButtonClick="ClearPrepositive" ValueChanged="PrepositiveChanged" Dense="true" Clearable="true" Margin="Margin.Dense" T="Templates" Label="选择模板" Variant="Variant.Filled">
             @foreach (var item in Templates)
             {
-                <MudSelectItem Value="@item" />
+                <MudSelectItem  Value="@item" />
             }
             
         </MudSelect>
     </DialogContent>
     <DialogActions>
-        <MudFab Size="Size.Small" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" />
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddPrepositive" Class="px-10">确定</MudButton>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="()=>{PrepositiveVisible=false;}" Class="px-10">取消</MudButton>
+        <MudFab Size="Size.Small" Color="Color.Primary"  StartIcon="@Icons.Material.Filled.Delete" />
+        <MudFab Size="Size.Small" Color="Color.Primary" OnClick="()=>{ADDPrepositiveVisible=true;}" StartIcon="@Icons.Material.Filled.Add" />
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium" OnClick="SavePrepositive">确定</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium" OnClick="()=>{PrepositiveVisible=false;}">取消</MudButton>
+    </DialogActions>
+</MudDialog>
+
+<MudDialog @bind-IsVisible="ADDPrepositiveVisible" Options="PrepositiveDialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-3" />添加自定义模板
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudTextField  @bind-Value="AddTemplates.Act" HelperText="模板标题" Variant="Variant.Filled" />
+        <MudTextField Lines="5" @bind-Value="AddTemplates.Prompt" HelperText="比如你可以说,你是一个乐于助人的助手" Variant="Variant.Filled" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium" OnClick="AddPrepositive">确定</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium" OnClick="()=>{ADDPrepositiveVisible=false;}">取消</MudButton>
     </DialogActions>
 </MudDialog>

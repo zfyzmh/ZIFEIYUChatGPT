@@ -64,4 +64,12 @@ public static class MauiProgram
     {
         Common.ServiceProvider.GetService<ZFYDatabase>()!.ErrorLog(e.Exception);
     }
+
+    /// <summary>
+    /// 将Resources\Raw文件下所有文件替换
+    /// </summary>
+    /// <returns></returns>
+    private static async Task InitFile()
+    {
+    }
 }
