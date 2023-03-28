@@ -1,7 +1,6 @@
 ﻿using SQLite;
 using ZIFEIYU.DataBase;
 using ZIFEIYU.Entity;
-using System.Linq;
 
 namespace ZIFEIYU.Dao
 {
@@ -70,6 +69,29 @@ namespace ZIFEIYU.Dao
             {
                 await _database.DeleteAsync<ChatEntity>(chatId);
             }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public async Task AddPrepositive(Templates templates)
+        {
+            await _database.InsertAsync(templates);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public async Task DelPrepositive(long templatesId)
+        {
+            await _database.DeleteAsync<Templates>(templatesId);
+        }
+
+        public async Task<List<Templates>> GetAllPrepositive()
+        {
+            return await _database.Table<Templates>().ToListAsync();
         }
     }
 }

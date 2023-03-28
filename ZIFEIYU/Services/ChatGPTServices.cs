@@ -101,5 +101,28 @@ namespace ZIFEIYU.Services
         {
             await _dao.DeleteChat(chatId);
         }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public async Task AddPrepositive(Templates templates)
+        {
+            await _dao.AddPrepositive(templates);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<Templates>> GetAllPrepositive()
+        {
+            return await _dao.GetAllPrepositive();
+        }
+
+        public async Task DeletePrepositive(long Id)
+        {
+            await _dao.DelPrepositive(Id);
+        }
     }
 }

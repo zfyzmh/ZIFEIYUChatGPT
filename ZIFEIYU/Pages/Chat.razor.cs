@@ -10,7 +10,6 @@ using ZFY.ChatGpt.Dto;
 using ZFY.ChatGpt.Dto.InputDto;
 using ZFY.ChatGpt.Services;
 using ZIFEIYU.DataBase;
-using ZIFEIYU.Dto;
 using ZIFEIYU.Entity;
 using ZIFEIYU.Global;
 using ZIFEIYU.Services;
@@ -29,6 +28,8 @@ namespace ZIFEIYU.Pages
         [Inject] public IJSRuntime jSRuntime { get; set; }
 
         public MudTextField<string> TextField { get; set; }
+        public MudSelect<Templates> SelectTemplate { get; set; }
+
         public string ChatTheme { get; set; }
 
         public string HelperText { get; set; }
@@ -73,11 +74,12 @@ namespace ZIFEIYU.Pages
 
         private async Task InitTemplates()
         {
+            Templates = await ChatGPTServices.GetAllPrepositive();
             using var stream = await FileSystem.OpenAppPackageFileAsync("Templates/Prompts.zh-an.json");
 
             using var reader = new StreamReader(stream);
             var contents = reader.ReadToEnd();
-            Templates = JsonHelper.DeserializeJsonToList<Templates>(contents);
+            Templates.AddRange(JsonHelper.DeserializeJsonToList<Templates>(contents));
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -225,21 +227,45 @@ namespace ZIFEIYU.Pages
             if (template != null) ChatPrepositive = template.Prompt;
         }
 
+        /// <summary>
+        /// 添加对话模板
+        /// </summary>
+        /// <returns></returns>
         public async Task AddPrepositive()
         {
             if (!string.IsNullOrWhiteSpace(AddTemplates.Act) && !string.IsNullOrWhiteSpace(AddTemplates.Prompt))
             {
-                Templates.Insert(0, new Dto.Templates() { Act = AddTemplates.Act, Prompt = AddTemplates.Prompt });
-
-                string filepath = Path.Combine(FileSystem.AppDataDirectory, "Templates", "CustomTemplate.json");
-
-                await File.OpenWrite(filepath).WriteAsync(Encoding.UTF8.GetBytes(JsonHelper.SerializeObject(Templates)));
-
-                StateHasChanged();
+                await ChatGPTServices.AddPrepositive(AddTemplates);
                 AddTemplates = new Templates();
+                StateHasChanged();
+                await InitTemplates();
+                ADDPrepositiveVisible = false;
             }
         }
 
+        /// <summary>
+        /// 添加对话模板
+        /// </summary>
+        /// <returns></returns>
+        public async Task DelPrepositive()
+        {
+            if (SelectTemplate.Value == null) return;
+
+            if (SelectTemplate.Value.Id > 0)
+            {
+                await ChatGPTServices.DeletePrepositive(SelectTemplate.Value.Id);
+                ChatPrepositive = string.Empty;
+                await SelectTemplate.Clear();
+                StateHasChanged();
+                await InitTemplates();
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="eventArgs"></param>
+        /// <returns></returns>
         public async Task ClearPrepositive(MouseEventArgs eventArgs)
         {
             ChatPrepositive = string.Empty;

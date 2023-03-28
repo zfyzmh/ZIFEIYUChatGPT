@@ -2,7 +2,7 @@
 @page "/"
 @using System.Diagnostics;
 @using BlazorPro.Spinkit;
-@using ZIFEIYU.Dto;
+@using ZIFEIYU.Entity;
 
 <div class="main">
     <div  id="IndexBody" class="body">
@@ -53,7 +53,6 @@
                         <MudFab Size="Size.Small" OnClick="@Send" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Send" Disabled="_processing">
                         </MudFab>
                     </MudTooltip>
-                   
                 </ContentTemplate>
             </SpinLoader>
 
@@ -70,7 +69,7 @@
     </TitleContent>
     <DialogContent>
         <MudTextField Lines="5" @bind-Value="ChatPrepositive" HelperText="比如你可以说,你是一个乐于助人的助手" Variant="Variant.Filled" />
-        <MudSelect OnClearButtonClick="ClearPrepositive" ValueChanged="PrepositiveChanged" Dense="true" Clearable="true" Margin="Margin.Dense" T="Templates" Label="选择模板" Variant="Variant.Filled">
+        <MudSelect OnClearButtonClick="ClearPrepositive" @ref="SelectTemplate" ValueChanged="PrepositiveChanged" Dense="true" Clearable="true" Margin="Margin.Dense" T="Templates" Label="选择模板" Variant="Variant.Filled">
             @foreach (var item in Templates)
             {
                 <MudSelectItem  Value="@item" />
@@ -79,7 +78,7 @@
         </MudSelect>
     </DialogContent>
     <DialogActions>
-        <MudFab Size="Size.Small" Color="Color.Primary"  StartIcon="@Icons.Material.Filled.Delete" />
+        <MudFab Size="Size.Small" OnClick=DelPrepositive Color="Color.Primary" StartIcon="@Icons.Material.Filled.Delete" />
         <MudFab Size="Size.Small" Color="Color.Primary" OnClick="()=>{ADDPrepositiveVisible=true;}" StartIcon="@Icons.Material.Filled.Add" />
         <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium" OnClick="SavePrepositive">确定</MudButton>
         <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium" OnClick="()=>{PrepositiveVisible=false;}">取消</MudButton>
