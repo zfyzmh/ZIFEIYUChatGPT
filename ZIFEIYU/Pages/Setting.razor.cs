@@ -21,8 +21,6 @@ namespace ZIFEIYU.Pages
                 userConfig ??= UserServices!.GetConfig().Result;
                 return userConfig;
             }
-
-            set => userConfig = value;
         }
 
         public string ApiKey
@@ -42,7 +40,7 @@ namespace ZIFEIYU.Pages
             {
                 UserConfig.ProxyAddress = value;
                 UserServices!.UpdateConfig(UserConfig);
-                if (Proxy_Switch) RestartApp();
+                if (Proxy_Switch) _ = RestartApp();
             }
         }
 
@@ -53,7 +51,7 @@ namespace ZIFEIYU.Pages
             {
                 UserConfig.ProxyPort = value;
                 UserServices!.UpdateConfig(UserConfig);
-                if (Proxy_Switch) RestartApp();
+                if (Proxy_Switch) _ = RestartApp();
             }
         }
 
@@ -99,14 +97,14 @@ namespace ZIFEIYU.Pages
             }
         }
 
-        [Inject] private IDialogService DialogService { get; set; }
+        [Inject] private IDialogService? DialogService { get; set; }
 
         /// <summary>
         /// 重启应用
         /// </summary>
         public async Task RestartApp()
         {
-            bool? result = await DialogService.ShowMessageBox(
+            bool? result = await DialogService!.ShowMessageBox(
             "提示!",
             "更改此配置需重启应用以响应更新!",
             yesText: "立刻重启!", cancelText: "稍后手动重启");

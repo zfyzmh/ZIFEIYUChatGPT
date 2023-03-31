@@ -47,6 +47,12 @@ namespace ZIFEIYU.Pages
         public bool PrepositiveVisible { get; set; }
 
         public bool ADDPrepositiveVisible { get; set; }
+
+        public bool SettingVisible { get; set; }
+
+        public double Temperature { get; set; }
+        public int MaxTokens { get; set; }
+
         public string ChatPrepositive { get; set; }
 
         private DialogOptions PrepositiveDialogOptions = new() { FullWidth = true };

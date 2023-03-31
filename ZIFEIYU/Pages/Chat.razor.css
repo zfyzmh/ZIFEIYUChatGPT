@@ -38,3 +38,17 @@
     padding-bottom: 0;
   }
 }
+.config-item {
+  width: 100%;
+  height: 80px;
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  grid-template-columns: 1fr 2fr;
+}
+.config-item div:nth-of-type(1) {
+  padding-left: 1rem;
+}
+.config-item div:nth-of-type(2) {
+  display: flex;
+}

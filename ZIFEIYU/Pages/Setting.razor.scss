@@ -18,13 +18,11 @@
 .pagebody {
     display: grid;
     grid-template-columns: 1fr;
-    grid-gap: 20px;
+    grid-gap: 10px;
     overflow-y: scroll;
     height: 80vh;
 
     &::-webkit-scrollbar {
         width: 0;
     }
-
-    margin-bottom: 5vh;
 }
