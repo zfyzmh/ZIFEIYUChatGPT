@@ -162,7 +162,7 @@ namespace ZFY.ChatGpt.Services
                     }
                     else
                     {
-                        var msg = new ChatMessage() { Role = "assistant", Content = "访问chatgpt失败,状态码:" + response.StatusCode.ToString() };
+                        var msg = new ChatMessage() { Role = "assistant", Content = "访问chatgpt失败,状态码:" + (int)response.StatusCode + "错误信息:" + await response.Content.ReadAsStringAsync() };
                         return new OutChat() { Choices = new Choice[] { new Choice() { Message = msg } } };
                     }
                 }

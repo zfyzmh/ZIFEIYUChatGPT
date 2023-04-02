@@ -9,7 +9,7 @@ using ZIFEIYU.util;
 
 namespace ZIFEIYU.Services
 {
-    public class ChatGPTServices
+    public class ChatServices
     {
         public bool IsManualCancellation;
         private Dictionary<string, string> Headers = new Dictionary<string, string>();
@@ -17,13 +17,12 @@ namespace ZIFEIYU.Services
         public event EventHandler<List<ChatMessage>> StartPublishPaper;
 
         private readonly ChatDao _dao;
-        private readonly ChatServices chatServices;
+        private readonly ZFY.ChatGpt.Services.ChatServices chatServices;
 
-        public ChatGPTServices(ChatDao dao, ChatServices chatServices)
+        public ChatServices(ChatDao dao, ZFY.ChatGpt.Services.ChatServices chatServices)
         {
             _dao = dao;
             this.chatServices = chatServices;
-            Headers.Add("Authorization", "Bearer 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");
         }
 
         public async Task<OutChat> GetDavinci(DavinciInput davinciInput)
@@ -44,11 +43,6 @@ namespace ZIFEIYU.Services
             chatEntity.DialogJson = JsonHelper.SerializeObject(messages);
             chatEntity.Theme ??= messages.First(m => m.Role == "user").Content;
             await _dao.SaveChat(chatEntity);
-        }
-
-        public async Task SendSSEChat(InChat chatInput, EventHandler<List<ChatMessage>> eventHandler)
-        {
-            await chatServices.SendSSEChat(chatInput, eventHandler);
         }
 
         public async Task SendChat(InChat chatInput, EventHandler<List<ChatMessage>> eventHandler)

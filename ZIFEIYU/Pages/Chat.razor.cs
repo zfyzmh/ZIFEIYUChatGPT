@@ -1,19 +1,11 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using MudBlazor;
-using System.Linq;
-using System.Text;
-using ZFY.ChatGpt;
 using ZFY.ChatGpt.Dto;
 using ZFY.ChatGpt.Dto.InputDto;
-using ZFY.ChatGpt.Services;
-using ZIFEIYU.DataBase;
 using ZIFEIYU.Entity;
-using ZIFEIYU.Global;
 using ZIFEIYU.Services;
-using ZIFEIYU.util;
 using JsonHelper = ZIFEIYU.util.JsonHelper;
 
 namespace ZIFEIYU.Pages
@@ -23,7 +15,7 @@ namespace ZIFEIYU.Pages
         public bool _processing;
 
         private bool _isDispose = false;
-        [Inject] public ChatGPTServices ChatGPTServices { get; set; }
+        [Inject] public ChatServices ChatGPTServices { get; set; }
 
         [Inject] public IJSRuntime jSRuntime { get; set; }
 
@@ -50,8 +42,8 @@ namespace ZIFEIYU.Pages
 
         public bool SettingVisible { get; set; }
 
-        public double Temperature { get; set; }
-        public int MaxTokens { get; set; }
+        public double Temperature { get; set; } = 1;
+        public int MaxTokens { get; set; } = 4000;
 
         public string ChatPrepositive { get; set; }
 
@@ -105,7 +97,11 @@ namespace ZIFEIYU.Pages
                 await jSRuntime.InvokeAsync<Task>("UpdateScroll", "IndexBody");
                 _processing = true;
                 StateHasChanged();
-                await ChatGPTServices.SendChat(new InChat(Messages), DialogEvent);
+
+                InChat inChat = new(Messages);
+                inChat.Temperature = Temperature;
+                //inChat.MaxTokens = MaxTokens;
+                await ChatGPTServices.SendChat(inChat, DialogEvent);
                 _processing = false;
                 if (!_isDispose) await jSRuntime.InvokeAsync<Task>("UpdateScroll", "IndexBody");
                 StateHasChanged();
@@ -250,7 +246,7 @@ namespace ZIFEIYU.Pages
         }
 
         /// <summary>
-        /// 添加对话模板
+        /// 删除对话模板
         /// </summary>
         /// <returns></returns>
         public async Task DelPrepositive()

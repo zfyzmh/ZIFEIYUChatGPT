@@ -25,8 +25,6 @@ namespace ZFY.ChatGpt
         {
             chatOption ??= new ChatOption();
             services.AddSingleton(chatOption);
-            //var chatHttpHandler = new ChatHttpHandler();
-            //services.AddSingleton(chatHttpHandler);
 
             services.AddHttpClient("ChatGPT", config =>
             {
@@ -46,6 +44,7 @@ namespace ZFY.ChatGpt
             );
             services.AddSingleton<OpenAiHttpClientFactory>();
             services.AddSingleton<ChatServices>();
+            services.AddSingleton<ImagesServices>();
             ChatServiceProvider.ServiceProvider = services.BuildServiceProvider();
             return services;
         }

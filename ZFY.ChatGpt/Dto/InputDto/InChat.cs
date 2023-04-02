@@ -32,13 +32,13 @@ namespace ZFY.ChatGpt.Dto.InputDto
         /// 0到2之间,越大越随机
         /// </summary>
         [JsonProperty("temperature")]
-        public int? Temperature { get; set; } = 1;
+        public double? Temperature { get; set; } = 1;
 
         /// <summary>
         /// 采样集中度不建议使用使用Temperature即可
         /// </summary>
         [JsonProperty("top_p")]
-        public int? TopP { get; set; }
+        public double? TopP { get; set; }
 
         /// <summary>
         ///

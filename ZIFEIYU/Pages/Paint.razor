@@ -1,0 +1,67 @@
+﻿@page "/Paint"
+
+<div class="main">
+    <div  id="IndexBody" class="body">
+        @foreach (var item in Images)
+        {
+            <MudCard Style="display:inline-block">
+                <MudCardContent>
+                    <MudImage Width="256" Height="256" Src="@item" Alt="Swedish Farm House" Class="rounded-lg" />
+                </MudCardContent>
+            </MudCard>
+        }
+    </div>
+    <div class="bottom">
+        <div style="margin-right:5px; display:flex; align-items: center;">
+            <MudMenu Disabled="_processing" Dense="true" Style="margin-right:5px; border-radius: 50% !important;" Variant="Variant.Filled" Icon="@Icons.Material.Filled.MoreHoriz" Color="Color.Primary" Size="Size.Large" ActivationEvent="@MouseEvent.LeftClick">
+                <ChildContent>
+                    <MudMenuItem>删除对话</MudMenuItem>
+                    <MudMenuItem OnClick="Retry">重试</MudMenuItem>
+                </ChildContent>
+            </MudMenu>
+            <SpinLoader IsLoading="_processing">
+                <LoadingTemplate>
+                        <Wave  Color="#776be7" Center="true" />
+                </LoadingTemplate>
+                <ContentTemplate>
+                    <MudFab  OnClick="Reset" Size="Size.Small" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Cached" />
+                </ContentTemplate>
+            </SpinLoader>
+        </div>
+        <MudTextField id="HelperText"  Clearable="true" Immediate="true" @ref="TextField" OnKeyPress="KeyDown" T="string" Style="height:45px;" Variant="Variant.Filled" @bind-Value="HelperText" />
+        <div style="margin-left:10px;">
+            <SpinLoader IsLoading="_processing">
+                <LoadingTemplate>
+                    <MudFab Size="Size.Small" OnClick="@Stop" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Stop">
+                    </MudFab>
+                </LoadingTemplate>
+                <ContentTemplate>
+                    <MudTooltip Text="发送">
+                        <MudFab Size="Size.Small" OnClick="@Send" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Send" Disabled="_processing">
+                        </MudFab>
+                    </MudTooltip>
+                </ContentTemplate>
+            </SpinLoader>
+
+        </div>
+    </div>
+</div>
+
+<MudDialog @bind-IsVisible="DialogVisible" Options="new() { FullWidth = true }">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-3" /> 创建或从本地打开图像
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudTextField Lines="5" @bind-Value="@CreateImageTest" Clearable="true" T="string" Variant="Variant.Filled" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" OnClick="CreateImage" Color="Color.Primary"  Class="px-10">创建图像</MudButton>
+        <MudButton Variant="Variant.Filled" OnClick="LoadImage" Color="Color.Primary" Class="px-10">从本地载入</MudButton>
+    </DialogActions>
+
+</MudDialog>
+@*<MudOverlay Visible="_processing" DarkBackground="true" Absolute="true">
+    <MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
+</MudOverlay>*@

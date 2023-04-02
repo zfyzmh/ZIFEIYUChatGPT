@@ -17,8 +17,6 @@ namespace ZIFEIYU.Entity
 
         public bool IsProxy { get; set; } = false;
 
-        public bool IsSSL { get; set; } = true;
-
         public string ProxyAddress { get; set; } = "127.0.0.1";
 
         public int ProxyPort { get; set; } = 7890;

@@ -26,5 +26,9 @@
   {
     "outputFile": "Pages/Setting.razor.css",
     "inputFile": "Pages/Setting.razor.scss"
+  },
+  {
+    "outputFile": "Pages/Paint.razor.css",
+    "inputFile": "Pages/Paint.razor.scss"
   }
 ]
