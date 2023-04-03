@@ -30,5 +30,9 @@
   {
     "outputFile": "Pages/Paint.razor.css",
     "inputFile": "Pages/Paint.razor.scss"
+  },
+  {
+    "outputFile": "Pages/CreatingPaint.razor.css",
+    "inputFile": "Pages/CreatingPaint.razor.scss"
   }
 ]

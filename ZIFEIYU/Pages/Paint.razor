@@ -2,20 +2,13 @@
 
 <div class="main">
     <div  id="IndexBody" class="body">
-        @foreach (var item in Images)
-        {
-            <MudCard Style="display:inline-block">
-                <MudCardContent>
-                    <MudImage Width="256" Height="256" Src="@item" Alt="Swedish Farm House" Class="rounded-lg" />
-                </MudCardContent>
-            </MudCard>
-        }
+        <h1>图片编辑</h1>
     </div>
     <div class="bottom">
         <div style="margin-right:5px; display:flex; align-items: center;">
             <MudMenu Disabled="_processing" Dense="true" Style="margin-right:5px; border-radius: 50% !important;" Variant="Variant.Filled" Icon="@Icons.Material.Filled.MoreHoriz" Color="Color.Primary" Size="Size.Large" ActivationEvent="@MouseEvent.LeftClick">
                 <ChildContent>
-                    <MudMenuItem>删除对话</MudMenuItem>
+                    <MudMenuItem>删除</MudMenuItem>
                     <MudMenuItem OnClick="Retry">重试</MudMenuItem>
                 </ChildContent>
             </MudMenu>
