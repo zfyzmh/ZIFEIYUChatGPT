@@ -56,8 +56,6 @@ namespace ZIFEIYU.Pages
                     _processing = false;
                     if (!_isDispose) await jSRuntime.InvokeAsync<Task>("UpdateScroll", "IndexBody");
                     StateHasChanged();
-
-                    if (ImagesServices.IsManualCancellation) return;
                 }
                 catch (Exception ex)
                 {
@@ -75,7 +73,9 @@ namespace ZIFEIYU.Pages
             DialogVisible = false;
             _processing = true;
             StateHasChanged();
-            var outImage = await ImagesServices.CreateImages(new InCreateImages(HelperText));
+            var outImage = await ImagesServices.CreateImages(new InCreateImages(HelperText) { N = ImageNumber });
+            if (ImagesServices.IsManualCancellation) return;
+
             if (outImage != null)
             {
                 Images.AddRange(outImage.Data.Select(m => m.Url).ToList());
@@ -97,7 +97,7 @@ namespace ZIFEIYU.Pages
 
             ImagesServices.IsManualCancellation = true;
             await ImagesServices.Stop();
-
+            _processing = false;
             StateHasChanged();
         }
 

@@ -6,7 +6,13 @@
         {
             <MudCard Style="display:inline-block">
                 <MudCardContent>
-                    <MudImage Width="256" Height="256" Src="@item" Alt="Swedish Farm House" Class="rounded-lg" />
+                    <div style="position: relative;">
+                        <MudImage Width="256" Height="256" Src="@item" Alt="Swedish Farm House" Class="rounded-lg" />
+                        <div class="image-helper">
+                            <MudIconButton Icon="@Icons.Material.Filled.Download"></MudIconButton>
+                            <MudIconButton Icon="@Icons.Material.Filled.Edit"></MudIconButton>
+                        </div>
+                    </div>
                 </MudCardContent>
             </MudCard>
         }
@@ -19,6 +25,7 @@
                 <LoadingTemplate>
                     <MudFab Size="Size.Small" OnClick="@Stop" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Stop">
                     </MudFab>
+                     <Wave  Color="#776be7" Center="true" />
                 </LoadingTemplate>
                 <ContentTemplate>
                     <MudTooltip Text="发送">
@@ -42,3 +49,11 @@
         </div>
     </div>
 </div>
+@code {
+
+    bool _click = false;
+    bool _hover = true;
+    bool _focus = true;
+
+    MudIconButton _iconButton1;
+}

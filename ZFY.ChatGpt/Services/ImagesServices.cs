@@ -68,9 +68,7 @@ namespace ZFY.ChatGpt.Services
             }
             catch (Exception ex)
             {
-                string errprMessage = "网络连接失败,请检查网络配置!" +
-                    "\r\n" + ex.Message + "\r\n";
-                throw new Exception(errprMessage);
+                throw  ex;
             }
         }
     }

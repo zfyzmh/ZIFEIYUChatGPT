@@ -28,6 +28,12 @@
             margin: 5px;
         }
     }
+
+    .image-helper {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+    }
 }
 
 @media (min-width: 641px) {

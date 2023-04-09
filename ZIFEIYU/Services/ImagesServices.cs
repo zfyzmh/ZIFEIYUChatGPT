@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ZFY.ChatGpt.Dto.InputDto;
 using ZFY.ChatGpt.Dto.OutDto;
+using ZFY.ChatGpt.Services;
 
 namespace ZIFEIYU.Services
 {
@@ -21,13 +22,26 @@ namespace ZIFEIYU.Services
 
         public async Task<OutImage> CreateImages(InCreateImages inCreateImage)
         {
-            inCreateImage.N = 3;
             return await imagesServices.CreateImages(inCreateImage);
         }
 
-        public Task Stop()
+        public async Task Stop()
         {
-            throw new NotImplementedException();
+            imagesServices.IsManualCancellation = true;
         }
+
+        /*async Task SaveFile(CancellationToken cancellationToken)
+        {
+            using var stream = new MemoryStream(Encoding.Default.GetBytes("Hello from the Community Toolkit!"));
+            var fileSaverResult = await FileSaver.Default.SaveAsync("test.txt", stream, cancellationToken);
+            if (fileSaverResult.IsSuccessful)
+            {
+                await Toast.Make($"The file was saved successfully to location: {fileSaverResult.FilePath}").Show(cancellationToken);
+            }
+            else
+            {
+                await Toast.Make($"The file was not saved successfully with error: {fileSaverResult.Exception.Message}").Show(cancellationToken);
+            }
+        }*/
     }
 }
