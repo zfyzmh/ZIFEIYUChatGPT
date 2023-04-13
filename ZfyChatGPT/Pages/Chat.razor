@@ -1,0 +1,136 @@
+﻿@page "/chat"
+@page "/"
+@using System.Diagnostics;
+@using BlazorPro.Spinkit;
+@using ZfyChatGPT.Entity;
+
+<div class="main">
+    <div  id="IndexBody" class="body">
+        <div style="position:absolute;opacity:0.7">
+            <MudMenu MaxHeight="250" Dense="true" Icon="@Icons.Material.Outlined.AccessTime" Color="Color.Primary" Size="Size.Medium" ActivationEvent="@MouseEvent.MouseOver">
+                <ChildContent >
+                    <MudMenuItem OnClick="ClearHistoryChat">清空对话(保存最近的10条)</MudMenuItem>
+                    @foreach (var item in chatEntities)
+                    {
+                        <MudMenuItem OnClick="async ()=>{  await SwitchChat(item.Id);}">@item.Theme</MudMenuItem>
+                    }
+                </ChildContent>
+            </MudMenu>
+        </div>
+        
+        <Dialogue IsCodeOver="_processing" Messages="Messages"></Dialogue>
+
+        
+    </div>
+    <div class="bottom">
+        <div style="margin-right:5px; display:flex; align-items: center;">
+            <MudMenu Disabled="_processing" Dense="true" Style="margin-right:5px; border-radius: 50% !important;" Variant="Variant.Filled" Icon="@Icons.Material.Filled.MoreHoriz" Color="Color.Primary" Size="Size.Large" ActivationEvent="@MouseEvent.LeftClick">
+                <ChildContent>
+                    <MudMenuItem OnClick="DeleteChat">删除对话</MudMenuItem>
+                    <MudMenuItem Disabled="Messages.Count>0" OnClick="()=>{PrepositiveVisible=true;}">前置语句</MudMenuItem>
+                    <MudMenuItem OnClick="Retry">重试</MudMenuItem>
+                    <MudMenuItem OnClick="()=>{SettingVisible=true;}">对话设置</MudMenuItem>
+                </ChildContent>
+            </MudMenu>
+            <SpinLoader IsLoading="_processing">
+                <LoadingTemplate>
+                        <Wave  Color="#776be7" Center="true" />
+                </LoadingTemplate>
+                <ContentTemplate>
+                    <MudFab  OnClick="Reset" Size="Size.Small" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Cached" />
+                </ContentTemplate>
+            </SpinLoader>
+        </div>
+        <MudTextField id="HelperText"  Clearable="true" Immediate="true" @ref="TextField" OnKeyPress="KeyDown" T="string" Style="height:45px;" Variant="Variant.Filled" @bind-Value="HelperText" />
+        <div style="margin-left:10px;">
+            <SpinLoader IsLoading="_processing">
+                <LoadingTemplate>
+                    <MudFab Size="Size.Small" OnClick="@Stop" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Stop">
+                    </MudFab>
+                </LoadingTemplate>
+                <ContentTemplate>
+                    <MudTooltip Text="发送">
+                        <MudFab Size="Size.Small" OnClick="@Send" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Send" Disabled="_processing">
+                        </MudFab>
+                    </MudTooltip>
+                </ContentTemplate>
+            </SpinLoader>
+
+        </div>
+    </div>
+</div>
+
+
+<MudDialog @bind-IsVisible="PrepositiveVisible" Options="PrepositiveDialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-3" /> 前置设置
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudTextField Lines="5" @bind-Value="ChatPrepositive" HelperText="比如你可以说,你是一个乐于助人的助手" Variant="Variant.Filled" />
+        <MudSelect OnClearButtonClick="ClearPrepositive" @ref="SelectTemplate" ValueChanged="PrepositiveChanged" Dense="true" Clearable="true" Margin="Margin.Dense" T="Templates" Label="选择模板" Variant="Variant.Filled">
+            @foreach (var item in Templates)
+            {
+                <MudSelectItem  Value="@item" />
+            }
+            
+        </MudSelect>
+    </DialogContent>
+    <DialogActions>
+        <MudFab Size="Size.Small" OnClick=DelPrepositive Color="Color.Primary" StartIcon="@Icons.Material.Filled.Delete" />
+        <MudFab Size="Size.Small" Color="Color.Primary" OnClick="()=>{ADDPrepositiveVisible=true;}" StartIcon="@Icons.Material.Filled.Add" />
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium" OnClick="SavePrepositive">确定</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium" OnClick="()=>{PrepositiveVisible=false;}">取消</MudButton>
+    </DialogActions>
+</MudDialog>
+
+<MudDialog @bind-IsVisible="ADDPrepositiveVisible" Options="PrepositiveDialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-3" />添加自定义模板
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudTextField  @bind-Value="AddTemplates.Act" HelperText="模板标题" Variant="Variant.Filled" />
+        <MudTextField Lines="5" @bind-Value="AddTemplates.Prompt" HelperText="比如你可以说,你是一个乐于助人的助手" Variant="Variant.Filled" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium" OnClick="AddPrepositive">确定</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium" OnClick="()=>{ADDPrepositiveVisible=false;}">取消</MudButton>
+    </DialogActions>
+</MudDialog>
+
+<MudDialog @bind-IsVisible="SettingVisible" Options="PrepositiveDialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-3" />对话设置
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudPaper Class="d-flex  align-center  mud-width-full">
+            <div class="config-item">
+                <div>
+                    <MudTooltip Text="较高值将使输出更加随机,较低值将使其更加集中和确定." Arrow="true" Placement="Placement.Right" Color="Color.Primary ">
+                        <MudText>随机度</MudText>
+                    </MudTooltip>
+                </div>
+                <div>
+                    <MudSlider Step="0.1" Min="0" Max="2" Value="@Temperature" ValueLabel="true" />
+
+                </div>
+            </div>
+        </MudPaper>
+        <MudPaper Class="d-flex  align-center  mud-width-full">
+            <div class="config-item">
+                <div>
+                    <MudText>max_tokens</MudText>
+                </div>
+                <div>
+                    <MudNumericField @bind-Value="MaxTokens" Label="最大响应字符,设置较小的值可以节省tokens" Variant="Variant.Text" Min="100" Max="4000" />
+                </div>
+            </div>
+        </MudPaper>
+    </DialogContent>
+</MudDialog>
+

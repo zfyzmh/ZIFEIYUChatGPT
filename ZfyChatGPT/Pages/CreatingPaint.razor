@@ -1,0 +1,51 @@
+﻿@page "/CreatingPaint"
+
+<div class="main">
+    <div id="IndexBody" class="body">
+        @foreach (string item in Images)
+        {
+            <MudCard Style="display:inline-block">
+                <MudCardContent>
+                    <div style="position: relative;">
+                        <MudImage Width="256" Height="256" Src="@item" Alt="Swedish Farm House" Class="rounded-lg" />
+                        <div class="image-helper">
+                            <MudIconButton OnClick="()=> Download(item)" Icon="@Icons.Material.Filled.Download"></MudIconButton>
+                            <MudIconButton Icon="@Icons.Material.Filled.Edit"></MudIconButton>
+                        </div>
+                    </div>
+                </MudCardContent>
+            </MudCard>
+        }
+    </div>
+    <div class="bottom">
+
+        <MudTextField id="HelperText" Lines="3" Clearable="true" Immediate="true"  T="string"  Variant="Variant.Filled" @bind-Value="HelperText" />
+        <div style="margin-left:10px;">
+            <SpinLoader IsLoading="_processing">
+                <LoadingTemplate>
+                    <MudFab Size="Size.Small" OnClick="@Stop" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Stop">
+                    </MudFab>
+                     <Wave  Color="#776be7" Center="true" />
+                </LoadingTemplate>
+                <ContentTemplate>
+                    <MudTooltip Text="发送">
+                        <MudFab Size="Size.Small" OnClick="@Send" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Send" Disabled="_processing">
+                        </MudFab>
+                    </MudTooltip>
+                    <SpinLoader IsLoading="_processing">
+                        <LoadingTemplate>
+                            <Wave Color="#776be7" Center="true" />
+                        </LoadingTemplate>
+                        <ContentTemplate>
+                            <MudFab OnClick="Reset" Size="Size.Small" Color="Color.Primary" StartIcon="@Icons.Material.Filled.ClearAll" />
+                        </ContentTemplate>
+                    </SpinLoader>
+                    <div>
+                        <MudNumericField Style="width: 5.5rem; height: 2.5rem; margin-top: 0.5rem;" @bind-Value="@ImageNumber" Max="10" Min="1" Variant="Variant.Outlined" />
+                    </div>
+                </ContentTemplate>
+            </SpinLoader>
+
+        </div>
+    </div>
+</div>

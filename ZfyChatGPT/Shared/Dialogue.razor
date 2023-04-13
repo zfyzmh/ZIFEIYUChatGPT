@@ -1,0 +1,66 @@
+﻿@using ZFY.ChatGpt.Dto;
+@using ZfyChatGPT.Global;
+
+@foreach (var item in Messages)
+{
+    @if (item.Role == "assistant")
+    {
+        <div style="display:flex;   ">
+            <div style=" margin-bottom: 10px; padding: 10px; max-width: 80%">
+                <MudCard>
+                    <MudCardContent>
+                        @if (!IsCodeOver)
+                        {
+                            <MudMarkdown CodeBlockTheme="@CodeBlockTheme" Value="@item.Content" />
+                        }
+                        else
+                        {
+                            @((MarkupString)GetMarkdown(item.Content))
+                        }
+                       
+                    </MudCardContent>
+                </MudCard>
+            </div>
+           
+        </div>
+    }
+    else if (item.Role == "user")
+    {
+        <div style="display:flex;" dir="rtl">
+            <div dir="ltr" style="word-wrap: break-word;  margin-bottom: 10px; padding: 10px; max-width: 80%">
+                <MudCard>
+                    <MudCardContent>
+                        <MudMarkdown CodeBlockTheme="@CodeBlockTheme" Value="@item.Content" />
+                    </MudCardContent>
+                </MudCard>
+            </div>
+          
+        </div>
+    }
+}
+<style>
+    p {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+</style>
+@code {
+    [Parameter]
+    public List<ChatMessage> Messages { get; set; }
+
+    [Parameter]
+    public bool IsCodeOver { get; set; }
+
+
+    public CodeBlockTheme CodeBlockTheme { get {
+            if ((bool)EventDispatcher.DispatchFunc("IsDarkTheme")) return CodeBlockTheme.Dark;
+            else return CodeBlockTheme.Github;
+        } }
+
+
+    public string GetMarkdown(string? tes)
+    {
+        return Markdig.Markdown.ToHtml(tes ?? string.Empty);
+    }
+}
+
