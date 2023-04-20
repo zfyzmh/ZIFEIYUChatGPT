@@ -13,11 +13,11 @@ namespace ZIFEIYU.Pages
         public bool _processing;
 
         private bool _isDispose = false;
-        [Inject] public ImagesServices ImagesServices { get; set; }
-        [Inject] public IMemoryCache MemoryCache { get; set; }
+        [Inject] public ImagesServices? ImagesServices { get; set; }
+        [Inject] public IMemoryCache? MemoryCache { get; set; }
 
-        [Inject] public IJSRuntime jSRuntime { get; set; }
-        [Inject] public ISnackbar Snackbar { get; set; }
+        [Inject] public IJSRuntime? jSRuntime { get; set; }
+        [Inject] public ISnackbar? Snackbar { get; set; }
 
         public string CreateImageTxt { get; set; }
 

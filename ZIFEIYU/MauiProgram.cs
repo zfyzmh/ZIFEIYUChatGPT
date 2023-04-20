@@ -30,29 +30,29 @@ public static class MauiProgram
         Common.ServiceProvider.GetService<ZFYDatabase>()!.Init();
 
         return builder.Build();
+    }
 
-        void ConfigureServices(IServiceCollection services)
-        {
-            services.AddHttpClient();
+    private static void ConfigureServices(IServiceCollection services)
+    {
+        services.AddHttpClient();
 
-            services.AddMemoryCache();
+        services.AddMemoryCache();
 
-            services.AddMauiBlazorWebView();
+        services.AddMauiBlazorWebView();
 #if DEBUG
-            services.AddBlazorWebViewDeveloperTools();
+        services.AddBlazorWebViewDeveloperTools();
 #endif
 
-            services.AddMudServices();
-            services.AddSingleton<ZFYDatabase>();
-            services.AddSingleton<ChatDao>();
+        services.AddMudServices();
+        services.AddSingleton<ZFYDatabase>();
+        services.AddSingleton<ChatDao>();
 
-            //批量注入服务
-            var servicesTypes = Assembly.GetExecutingAssembly().GetTypes().Where(m => m.Namespace == "ZIFEIYU.Services" & m.IsClass & m.IsVisible).ToArray();
+        //批量注入服务
+        var servicesTypes = Assembly.GetExecutingAssembly().GetTypes().Where(m => m.Namespace == "ZIFEIYU.Services" & m.IsClass & m.IsVisible).ToArray();
 
-            services.AddChatGPT();
+        services.AddChatGPT();
 
-            foreach (var servicesType in servicesTypes) { services.AddSingleton(servicesType); }
-        }
+        foreach (var servicesType in servicesTypes) { services.AddSingleton(servicesType); }
     }
 
     private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -64,13 +64,5 @@ public static class MauiProgram
     private static void OnFirstChanceException(object? sender, FirstChanceExceptionEventArgs e)
     {
         Common.ServiceProvider.GetService<ZFYDatabase>()!.ErrorLog(e.Exception);
-    }
-
-    /// <summary>
-    /// 将Resources\Raw文件下所有文件替换
-    /// </summary>
-    /// <returns></returns>
-    private static async Task InitFile()
-    {
     }
 }

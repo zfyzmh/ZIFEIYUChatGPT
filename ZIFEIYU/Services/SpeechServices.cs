@@ -33,25 +33,41 @@ namespace ZIFEIYU.Services
 
         public async Task<string> FromDefaultMicrophoneInput()
         {
-            await CheckAndRequestLocationPermission();
-            SpeechConfig.SpeechRecognitionLanguage = "zh-CN";
-            using var audioConfig = AudioConfig.FromDefaultMicrophoneInput();
-            using var speechRecognizer = new SpeechRecognizer(speechConfig, audioConfig);
+            SwitchLanguage("zh-CN", "zh-CN-XiaochenNeural");
+            if ((await CheckAndRequestMicrophonePermission()) == PermissionStatus.Granted)
+            {
+                using var audioConfig = AudioConfig.FromDefaultMicrophoneInput();
+                using var speechRecognizer = new SpeechRecognizer(speechConfig, audioConfig);
 
-            var speechRecognitionResult = await speechRecognizer.RecognizeOnceAsync();
-
-            return speechRecognitionResult.Text;
+                var speechRecognitionResult = await speechRecognizer.RecognizeOnceAsync();
+                return speechRecognitionResult.Text;
+            }
+            return "";
         }
 
         private bool isPlayVoice;
+
+        /// <summary>
+        /// 切换语言,及发言人
+        /// </summary>
+        /// <param name="language">语言</param>
+        /// <param name="Spokesman">发言人</param>
+        /// <returns></returns>
+        public void SwitchLanguage(string language, string? Spokesman = null)
+        {
+            SpeechConfig.SpeechRecognitionLanguage = language;
+            if (Spokesman != null)
+            {
+                SpeechConfig.SpeechSynthesisVoiceName = Spokesman;
+            }
+        }
 
         public async Task PlayVoice(string Test)
         {
             if (!isPlayVoice)
             {
+                SwitchLanguage("zh-CN", "zh-CN-XiaochenNeural");
                 isPlayVoice = true;
-                SpeechConfig.SpeechRecognitionLanguage = "zh-CN";
-                SpeechConfig.SpeechSynthesisVoiceName = "zh-CN-XiaochenNeural";
 
                 using var synthesizer = new SpeechSynthesizer(SpeechConfig);
 
@@ -60,7 +76,7 @@ namespace ZIFEIYU.Services
             }
         }
 
-        public async Task<PermissionStatus> CheckAndRequestLocationPermission()
+        public async Task<PermissionStatus> CheckAndRequestMicrophonePermission()
         {
             PermissionStatus status = await Permissions.CheckStatusAsync<Permissions.Microphone>();
 

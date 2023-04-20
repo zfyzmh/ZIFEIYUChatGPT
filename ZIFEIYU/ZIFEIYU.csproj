@@ -72,6 +72,7 @@
 
     <ItemGroup>
       <Content Remove="compilerconfig.json" />
+      <Content Remove="Resources\Raw\cognitiveservices-voices.json" />
     </ItemGroup>
 
     <ItemGroup>
@@ -109,7 +110,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Dto\" />
+      <MauiAsset Update="Resources\Raw\cognitiveservices-voices.json">
+        <CopyToOutputDirectory></CopyToOutputDirectory>
+      </MauiAsset>
     </ItemGroup>
 
 </Project>

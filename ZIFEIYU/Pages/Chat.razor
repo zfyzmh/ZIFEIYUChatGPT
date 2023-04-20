@@ -9,7 +9,8 @@
         <div style="position:absolute;opacity:0.7">
             <MudMenu MaxHeight="250" Dense="true" Icon="@Icons.Material.Outlined.AccessTime" Color="Color.Primary" Size="Size.Medium" ActivationEvent="@MouseEvent.MouseOver">
                 <ChildContent >
-                    <MudMenuItem OnClick="ClearHistoryChat">清空对话(保存最近的10条)</MudMenuItem>
+                    <MudMenuItem OnClick="async ()=> await ClearHistoryChat(10)">清空对话(保存最近的10条)</MudMenuItem>
+                    <MudMenuItem OnClick="async ()=> await ClearHistoryChat(5)">清空对话(保存最近的5条)</MudMenuItem>
                     @foreach (var item in chatEntities)
                     {
                         <MudMenuItem OnClick="async ()=>{  await SwitchChat(item.Id);}">@item.Theme</MudMenuItem>
@@ -17,7 +18,7 @@
                 </ChildContent>
             </MudMenu>
         </div>
-        <Dialogue IsCodeOver="_processing" Messages="Messages"></Dialogue>
+        <Dialogue IsMarkdown="IsMarkdown" IsCodeOver="_processing" Messages="Messages"></Dialogue>
     </div>
     <div class="bottom">
         <div style="margin-right:5px; display:flex; align-items: center;">
@@ -141,6 +142,34 @@
                     <MudSlider Step="0.1" Min="-2" Max="2" Value="@FrequencyPenalty" ValueLabel="true" />
                 </div>
             </div>
+        <div class="config-item">
+            <div>
+                <MudText>Markdown解析</MudText>
+            </div>
+            <div>
+                <MudSwitch @bind-Checked="@IsMarkdown" Color="Color.Primary" />
+            </div>
+        </div>
     </DialogContent>
 </MudDialog>
 
+
+<MudDialog @bind-IsVisible="LanguageVisible" Options="PrepositiveDialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-3" />语言设置
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <div class="config-item">
+            <div>
+                
+            </div>
+            <div>
+
+            </div>
+        </div>
+    </DialogContent>
+</MudDialog>
+
+            

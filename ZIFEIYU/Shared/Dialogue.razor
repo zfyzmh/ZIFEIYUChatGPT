@@ -12,13 +12,19 @@
                 <MudCard Style="display:inline-block">
                     <MudCardContent>
                         <div style="position: relative;">
-                            @if (!IsCodeOver)
+                            @if (IsMarkdown)
                             {
+                                @if (!IsCodeOver)
+                                {
                                 <MudMarkdown CodeBlockTheme="@CodeBlockTheme" Value="@item.Content" />
-                            }
-                            else
-                            {
+                                }
+                                else
+                                {
                                 @((MarkupString)GetMarkdown(item.Content))
+                                }
+                            }else
+                            {
+                                @item.Content
                             }
                         </div>
                     </MudCardContent>
@@ -34,7 +40,8 @@
             <div dir="ltr" style="word-wrap: break-word;  margin-bottom: 10px; padding: 10px; max-width: 80%">
                 <MudCard>
                     <MudCardContent>
-                        <MudMarkdown CodeBlockTheme="@CodeBlockTheme" Value="@item.Content" />
+                        @item.Content
+                        @*<MudMarkdown CodeBlockTheme="@CodeBlockTheme" Value="@item.Content" />*@
                     </MudCardContent>
                 </MudCard>
             </div>
@@ -51,7 +58,8 @@
 @code {
     [Parameter]
     public List<ChatMessage> Messages { get; set; }
-
+    [Parameter]
+    public bool IsMarkdown { get; set; }
     [Parameter]
     public bool IsCodeOver { get; set; }
 

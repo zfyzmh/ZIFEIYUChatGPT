@@ -80,13 +80,13 @@ namespace ZIFEIYU.Services
         /// 清理本地对话,保留十条最近的
         /// </summary>
         /// <returns></returns>
-        public async Task ClearHistoryChat()
+        public async Task ClearHistoryChat(int num)
         {
             long[] clearIds = (await _dao.GetAllChat()).OrderByDescending(m => m.UpdateDate).Select(m => m.Id).ToArray();
 
-            if (clearIds.Length > 10)
+            if (clearIds.Length > num)
             {
-                long[] clearIdss = clearIds.Skip(10).ToArray();
+                long[] clearIdss = clearIds.Skip(num).ToArray();
                 await _dao.DeleteChat(clearIdss);
             }
         }

@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.JSInterop;
 using MudBlazor;
 using ZFY.ChatGpt.Dto;
 using ZFY.ChatGpt.Dto.InputDto;
+using ZIFEIYU.Dto;
 using ZIFEIYU.Entity;
 using ZIFEIYU.Services;
 using JsonHelper = ZIFEIYU.util.JsonHelper;
@@ -12,27 +14,49 @@ namespace ZIFEIYU.Pages
 {
     public partial class Chat : IDisposable
     {
-        public bool _processing;
+        private bool _processing;
 
         private bool _isDispose = false;
-        [Inject] public ChatServices ChatGPTServices { get; set; }
+        [Inject] public ChatServices? ChatGPTServices { get; set; }
 
-        [Inject] public SpeechServices SpeechServices { get; set; }
+        [Inject] public SpeechServices? SpeechServices { get; set; }
 
-        [Inject] public IJSRuntime jSRuntime { get; set; }
+        [Inject] public IJSRuntime? jSRuntime { get; set; }
 
-        public MudTextField<string> TextField { get; set; }
-        public MudSelect<Templates> SelectTemplate { get; set; }
+        [Inject] public IMemoryCache? MemoryCache { get; set; }
 
-        public string ChatTheme { get; set; }
+        public MudTextField<string>? TextField { get; set; }
+        public MudSelect<Templates>? SelectTemplate { get; set; }
 
-        public string HelperText { get; set; }
+        public string? ChatTheme { get; set; }
+
+        public string? HelperText { get; set; }
 
         public List<ChatMessage> Messages { get; set; } = new List<ChatMessage>();
 
-        public List<ChatEntity> chatEntities { get; set; }
+        private bool IsMarkdown
+        {
+            get { return MemoryCache.TryGetValue("IsMarkdown", out _); }
+            set
+            {
+                if (value)
+                {
+                    MemoryCache.Set("IsMarkdown", 0);
+                }
+                else
+                {
+                    MemoryCache.Remove("IsMarkdown");
+                }
 
-        public List<Templates> Templates { get; set; }
+                StateHasChanged();
+            }
+        }
+
+        public List<ChatEntity>? chatEntities { get; set; }
+
+        public List<Templates>? Templates { get; set; }
+
+        public List<Cognitiveservices>? Cognitiveservices { get; set; } = new List<Cognitiveservices>();
 
         public Templates AddTemplates { get; set; } = new Templates();
 
@@ -41,6 +65,7 @@ namespace ZIFEIYU.Pages
         public bool PrepositiveVisible { get; set; }
 
         public bool ADDPrepositiveVisible { get; set; }
+        public bool LanguageVisible { get; set; }
 
         public bool SettingVisible { get; set; }
 
@@ -51,7 +76,7 @@ namespace ZIFEIYU.Pages
 
         public bool IsVoice { get; set; }
 
-        public string ChatPrepositive { get; set; }
+        public string? ChatPrepositive { get; set; }
 
         private DialogOptions PrepositiveDialogOptions = new() { FullWidth = true };
 
@@ -59,10 +84,11 @@ namespace ZIFEIYU.Pages
         {
             await InitTemplates();
 
-            //await SpeechServices.PlayVoice("测试1");
-
             await InitHistory();
-            ChatEntity chat = await ChatGPTServices.GetChatCurrent();
+
+            await InitCognitiveservices();
+
+            ChatEntity chat = await ChatGPTServices!.GetChatCurrent();
             if (chat != null)
             {
                 ChatId = chat.Id;
@@ -78,14 +104,40 @@ namespace ZIFEIYU.Pages
             chatEntities = await ChatGPTServices.InitHistory();
         }
 
+        private async Task InitCognitiveservices()
+        {
+            if (MemoryCache.TryGetValue("Cognitiveservices", out List<Cognitiveservices> temps))
+            {
+                Cognitiveservices.AddRange(temps);
+            }
+            else
+            {
+                using var stream = await FileSystem.OpenAppPackageFileAsync("cognitiveservices-voices.json");
+                using var reader = new StreamReader(stream);
+                string contents = reader.ReadToEnd();
+                var cognitives = JsonHelper.DeserializeJsonToList<Cognitiveservices>(contents);
+                Cognitiveservices.AddRange(cognitives);
+                MemoryCache.Set("Cognitiveservices", contents);
+            }
+        }
+
         private async Task InitTemplates()
         {
             Templates = await ChatGPTServices.GetAllPrepositive();
-            using var stream = await FileSystem.OpenAppPackageFileAsync("Templates/Prompts.zh-an.json");
 
-            using var reader = new StreamReader(stream);
-            var contents = reader.ReadToEnd();
-            Templates.AddRange(JsonHelper.DeserializeJsonToList<Templates>(contents));
+            if (MemoryCache.TryGetValue("FileTemplates", out List<Templates> temps))
+            {
+                Templates.AddRange(temps);
+            }
+            else
+            {
+                using var stream = await FileSystem.OpenAppPackageFileAsync("Templates/Prompts.zh-an.json");
+                using var reader = new StreamReader(stream);
+                var contents = reader.ReadToEnd();
+                var Filetemps = JsonHelper.DeserializeJsonToList<Templates>(contents);
+                Templates.AddRange(Filetemps);
+                MemoryCache.Set("FileTemplates", Filetemps);
+            }
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -198,9 +250,9 @@ namespace ZIFEIYU.Pages
             _isDispose = true;
         }
 
-        public async Task ClearHistoryChat()
+        public async Task ClearHistoryChat(int num)
         {
-            await ChatGPTServices.ClearHistoryChat();
+            await ChatGPTServices.ClearHistoryChat(num);
             chatEntities = await ChatGPTServices.InitHistory();
             StateHasChanged();
         }
