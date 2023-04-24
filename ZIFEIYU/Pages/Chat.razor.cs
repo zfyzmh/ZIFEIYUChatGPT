@@ -21,6 +21,8 @@ namespace ZIFEIYU.Pages
 
         [Inject] public SpeechServices? SpeechServices { get; set; }
 
+        [Inject] public UserServices? UserServices { get; set; }
+
         [Inject] public IJSRuntime? jSRuntime { get; set; }
 
         [Inject] public IMemoryCache? MemoryCache { get; set; }
@@ -58,14 +60,32 @@ namespace ZIFEIYU.Pages
 
         public List<Cognitiveservices>? Cognitiveservices { get; set; } = new List<Cognitiveservices>();
 
+        public List<Cognitiveservices>? Spokesmans { get; set; } = new List<Cognitiveservices>();
+
+        private Cognitiveservices? _spokesman;
+        public Cognitiveservices? Spokesman
+        { get => _spokesman; set { _spokesman = value; SpeechServices.SwitchLanguage(value.ShortName); } }
+
         public Templates AddTemplates { get; set; } = new Templates();
 
         public long ChatId { get; set; }
 
         public bool PrepositiveVisible { get; set; }
 
+        private string _language;
+
+        public string Language
+        {
+            get => _language; set
+            {
+                _language = value;
+                Spokesmans = Cognitiveservices!.Where(m => m.Locale == value).ToList();
+                Spokesman = Spokesmans.First();
+                StateHasChanged();
+            }
+        }
+
         public bool ADDPrepositiveVisible { get; set; }
-        public bool LanguageVisible { get; set; }
 
         public bool SettingVisible { get; set; }
 
@@ -119,6 +139,11 @@ namespace ZIFEIYU.Pages
                 Cognitiveservices.AddRange(cognitives);
                 MemoryCache.Set("Cognitiveservices", contents);
             }
+            var VoiceName = (await UserServices!.GetConfig()).SpeechSynthesisVoiceName;
+            await SpeechServices!.SwitchLanguage(VoiceName);
+
+            Language = SpeechServices.GetRegionPrefix(VoiceName);
+            Spokesman = Spokesmans!.First(m => m.ShortName == VoiceName);
         }
 
         private async Task InitTemplates()

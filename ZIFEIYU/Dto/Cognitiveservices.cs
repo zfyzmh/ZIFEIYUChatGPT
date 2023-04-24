@@ -31,8 +31,7 @@ public partial class Cognitiveservices
     public string LocaleName { get; set; }
 
     [JsonProperty("SampleRateHertz")]
-    [JsonConverter(typeof(ParseStringConverter))]
-    public long SampleRateHertz { get; set; }
+    public int SampleRateHertz { get; set; }
 
     [JsonProperty("VoiceType")]
     public VoiceType VoiceType { get; set; }
@@ -41,8 +40,7 @@ public partial class Cognitiveservices
     public Status Status { get; set; }
 
     [JsonProperty("WordsPerMinute", NullValueHandling = NullValueHandling.Ignore)]
-    [JsonConverter(typeof(ParseStringConverter))]
-    public long? WordsPerMinute { get; set; }
+    public int? WordsPerMinute { get; set; }
 
     [JsonProperty("StyleList", NullValueHandling = NullValueHandling.Ignore)]
     public string[] StyleList { get; set; }
@@ -52,13 +50,43 @@ public partial class Cognitiveservices
 
     [JsonProperty("RolePlayList", NullValueHandling = NullValueHandling.Ignore)]
     public string[] RolePlayList { get; set; }
+
+    public override string ToString() => LocalName;
 }
 
 public enum Gender
-{ Female, Male };
+{
+    /// <summary>
+    /// 男性
+    /// </summary>
+    Female,
 
+    /// <summary>
+    /// 女性
+    /// </summary>
+    Male
+};
+
+/// <summary>
+/// 状态
+/// </summary>
 public enum Status
-{ Deprecated, Ga, Preview };
+{
+    /// <summary>
+    /// 不赞成使用
+    /// </summary>
+    Deprecated,
+
+    /// <summary>
+    /// 正常
+    /// </summary>
+    Ga,
+
+    /// <summary>
+    /// 预览
+    /// </summary>
+    Preview
+};
 
 public enum VoiceType
 { Neural };

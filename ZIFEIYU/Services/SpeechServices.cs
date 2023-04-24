@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Globalization;
 
 namespace ZIFEIYU.Services
 {
@@ -33,7 +34,6 @@ namespace ZIFEIYU.Services
 
         public async Task<string> FromDefaultMicrophoneInput()
         {
-            SwitchLanguage("zh-CN", "zh-CN-XiaochenNeural");
             if ((await CheckAndRequestMicrophonePermission()) == PermissionStatus.Granted)
             {
                 using var audioConfig = AudioConfig.FromDefaultMicrophoneInput();
@@ -48,17 +48,36 @@ namespace ZIFEIYU.Services
         private bool isPlayVoice;
 
         /// <summary>
-        /// 切换语言,及发言人
+        /// 切换语言
         /// </summary>
-        /// <param name="language">语言</param>
-        /// <param name="Spokesman">发言人</param>
+        /// <param name="Spokesman">发言人(前缀为语言)</param>
         /// <returns></returns>
-        public void SwitchLanguage(string language, string? Spokesman = null)
+        public async Task SwitchLanguage(string Spokesman)
         {
-            SpeechConfig.SpeechRecognitionLanguage = language;
-            if (Spokesman != null)
+            var user = await userServices.GetConfig();
+            user.SpeechSynthesisVoiceName = Spokesman;
+            await userServices.UpdateConfig(user);
+
+            SpeechConfig.SpeechRecognitionLanguage = GetRegionPrefix(Spokesman);
+
+            SpeechConfig.SpeechSynthesisVoiceName = Spokesman;
+        }
+
+        /// <summary>
+        /// 从发言人获取地区前缀
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public string GetRegionPrefix(string input)
+        {
+            string[] parts = input.Split('-');
+            if (parts.Length >= 2)
             {
-                SpeechConfig.SpeechSynthesisVoiceName = Spokesman;
+                return parts[0] + "-" + parts[1];
+            }
+            else
+            {
+                return "未找到地区前缀";
             }
         }
 
@@ -66,7 +85,6 @@ namespace ZIFEIYU.Services
         {
             if (!isPlayVoice)
             {
-                SwitchLanguage("zh-CN", "zh-CN-XiaochenNeural");
                 isPlayVoice = true;
 
                 using var synthesizer = new SpeechSynthesizer(SpeechConfig);
@@ -76,6 +94,10 @@ namespace ZIFEIYU.Services
             }
         }
 
+        /// <summary>
+        /// 请求麦克风权限
+        /// </summary>
+        /// <returns></returns>
         public async Task<PermissionStatus> CheckAndRequestMicrophonePermission()
         {
             PermissionStatus status = await Permissions.CheckStatusAsync<Permissions.Microphone>();

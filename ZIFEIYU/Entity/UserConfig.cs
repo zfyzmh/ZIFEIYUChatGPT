@@ -22,5 +22,7 @@ namespace ZIFEIYU.Entity
         public int ProxyPort { get; set; } = 7890;
         public string AzureKey { get; set; } = "";
         public string AzureRegion { get; set; } = "";
+
+        public string SpeechSynthesisVoiceName { get; set; } = "zh-CN-XiaochenNeural";
     }
 }

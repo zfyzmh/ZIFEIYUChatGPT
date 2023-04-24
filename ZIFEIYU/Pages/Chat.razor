@@ -2,6 +2,7 @@
 @page "/"
 @using System.Diagnostics;
 @using BlazorPro.Spinkit;
+@using ZIFEIYU.Dto;
 @using ZIFEIYU.Entity;
 
 <div class="main">
@@ -150,26 +151,31 @@
                 <MudSwitch @bind-Checked="@IsMarkdown" Color="Color.Primary" />
             </div>
         </div>
-    </DialogContent>
-</MudDialog>
+        <div style="display:flex;">
+            <div style="flex:3;">
+                <MudSelect @bind-Value="Language" Dense="true" Clearable="true" Margin="Margin.Dense" T="string" Label="语言" Variant="Variant.Filled">
+                    @foreach (var item in Cognitiveservices.GroupBy(m => m.Locale).ToList())
+                    {
+                        <MudSelectItem Value="@item.Key" />
+                    }
 
-
-<MudDialog @bind-IsVisible="LanguageVisible" Options="PrepositiveDialogOptions">
-    <TitleContent>
-        <MudText Typo="Typo.h6">
-            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-3" />语言设置
-        </MudText>
-    </TitleContent>
-    <DialogContent>
-        <div class="config-item">
-            <div>
-                
+                </MudSelect>
             </div>
-            <div>
+            <div style="flex:0.5;" />
+            <div style="flex:6.5;">
+                <MudSelect @bind-Value="Spokesman"  Dense="true" Clearable="true" Margin="Margin.Dense" T="Cognitiveservices" Label="发言人" Variant="Variant.Filled">
+                    @foreach (var item in Spokesmans)
+                    {
+                        <MudSelectItem Value="@item" />
+                    }
 
+                </MudSelect>
             </div>
         </div>
     </DialogContent>
 </MudDialog>
+
+
+
 
             
