@@ -108,28 +108,5 @@ namespace ZIFEIYU.Pages
             _processing = false;
             StateHasChanged();
         }
-
-        public void Dispose()
-        {
-            _isDispose = true;
-        }
-
-        public async Task ClearHistory()
-        {
-            StateHasChanged();
-        }
-
-        public async Task Delete()
-        {
-            StateHasChanged();
-        }
-
-        public void SavePrepositive()
-        {
-        }
-
-        public void Retry()
-        {
-        }
     }
 }

@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Windows.Globalization;
 
 namespace ZIFEIYU.Services
 {
@@ -26,14 +25,20 @@ namespace ZIFEIYU.Services
         {
             get
             {
-                var config = userServices.GetConfig().GetAwaiter().GetResult();
-                speechConfig ??= SpeechConfig.FromSubscription(config.AzureKey, config.AzureRegion);
+                Entity.UserConfig config = userServices.GetConfig().GetAwaiter().GetResult();
+
+                if (!string.IsNullOrEmpty(config.AzureKey) && !string.IsNullOrEmpty(config.AzureRegion))
+                {
+                    speechConfig ??= SpeechConfig.FromSubscription(config.AzureKey, config.AzureRegion);
+                }
                 return speechConfig;
             }
         }
 
         public async Task<string> FromDefaultMicrophoneInput()
         {
+            if (SpeechConfig == null) return "key未设置!";
+
             if ((await CheckAndRequestMicrophonePermission()) == PermissionStatus.Granted)
             {
                 using var audioConfig = AudioConfig.FromDefaultMicrophoneInput();
@@ -54,6 +59,7 @@ namespace ZIFEIYU.Services
         /// <returns></returns>
         public async Task SwitchLanguage(string Spokesman)
         {
+            if (speechConfig == null) return;
             var user = await userServices.GetConfig();
             user.SpeechSynthesisVoiceName = Spokesman;
             await userServices.UpdateConfig(user);
@@ -83,6 +89,7 @@ namespace ZIFEIYU.Services
 
         public async Task PlayVoice(string Test)
         {
+            if (SpeechConfig == null) return;
             if (!isPlayVoice)
             {
                 isPlayVoice = true;

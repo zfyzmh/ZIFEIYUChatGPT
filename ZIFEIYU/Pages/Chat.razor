@@ -153,8 +153,8 @@
         </div>
         <div style="display:flex;">
             <div style="flex:3;">
-                <MudSelect @bind-Value="Language" Dense="true" Clearable="true" Margin="Margin.Dense" T="string" Label="语言" Variant="Variant.Filled">
-                    @foreach (var item in Cognitiveservices.GroupBy(m => m.Locale).ToList())
+                <MudSelect @bind-Value="Language" Dense="true"  Margin="Margin.Dense" T="string" Label="语言" Variant="Variant.Filled">
+                    @foreach (var item in Cognitiveservices.GroupBy(m => m.Locale).OrderByDescending(m=>m.Key).ToList())
                     {
                         <MudSelectItem Value="@item.Key" />
                     }
@@ -163,12 +163,11 @@
             </div>
             <div style="flex:0.5;" />
             <div style="flex:6.5;">
-                <MudSelect @bind-Value="Spokesman"  Dense="true" Clearable="true" Margin="Margin.Dense" T="Cognitiveservices" Label="发言人" Variant="Variant.Filled">
+                <MudSelect @bind-Value="Spokesman"  Dense="true"  Margin="Margin.Dense" T="Cognitiveservices" Label="发言人" Variant="Variant.Filled">
                     @foreach (var item in Spokesmans)
                     {
                         <MudSelectItem Value="@item" />
                     }
-
                 </MudSelect>
             </div>
         </div>

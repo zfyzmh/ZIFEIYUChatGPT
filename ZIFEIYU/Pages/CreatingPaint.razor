@@ -9,7 +9,7 @@
                     <div style="position: relative;">
                         <MudImage Width="256" Height="256" Src="@item" Alt="Swedish Farm House" Class="rounded-lg" />
                         <div class="image-helper">
-                            <MudIconButton Icon="@Icons.Material.Filled.Download"></MudIconButton>
+                            <MudIconButton OnClick="async ()=>  {  await ImagesServices.SaveImg(item); }" Icon="@Icons.Material.Filled.Download"></MudIconButton>
                             <MudIconButton Icon="@Icons.Material.Filled.Edit"></MudIconButton>
                         </div>
                     </div>
