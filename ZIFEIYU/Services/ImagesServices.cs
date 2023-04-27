@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Maui.Alerts;
+using Kotlin.Reflect;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ using Titanium.Web.Proxy.Http;
 using ZFY.ChatGpt.Dto.InputDto;
 using ZFY.ChatGpt.Dto.OutDto;
 using ZFY.ChatGpt.Services;
+using static Android.Icu.Text.CaseMap;
 
 namespace ZIFEIYU.Services
 {
@@ -48,7 +50,7 @@ namespace ZIFEIYU.Services
                 {
                     using Stream stream = await response.Content.ReadAsStreamAsync();
                     string fileName = Path.GetFileName(url) + ".png";
-                    string filePath = Path.Combine(GetFilePath(), fileName); // 将文件保存到当前用户的下载文件夹中
+                    string filePath = Path.Combine(await GetFilePath(), fileName); // 将文件保存到当前用户的下载文件夹中
                     using FileStream fileStream = new FileStream(filePath, FileMode.Create);
 
                     await stream.CopyToAsync(fileStream);
@@ -65,7 +67,7 @@ namespace ZIFEIYU.Services
             }
         }
 
-        private string GetFilePath()
+        private async Task<string> GetFilePath()
         {
             string filePath = string.Empty;
 
@@ -75,10 +77,27 @@ namespace ZIFEIYU.Services
                 string downloadsPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 filePath = Path.Combine(downloadsPath, "Downloads");
             }
+            else if (DeviceInfo.Platform == DevicePlatform.Android)
+            {
+                var result = await FilePicker.PickAsync(PickOptions.Default);
+                if (result != null)
+                {
+                    string cachePath = FileSystem.AppDataDirectory;.
+
+                    .00
+                    // 获取选择的文件夹路径
+                    string folderPath = result.FullPath;
+                    return folderPath;
+                }
+                else
+                {
+                    return FileSystem.AppDataDirectory;
+                }
+            }
             else
             {
-                // 在 Android 或其他应用中获取应用的缓存路径
-                string cachePath = FileSystem.CacheDirectory;
+                // 在其他平台中获取应用的缓存路径
+                string cachePath = FileSystem.AppDataDirectory;
                 filePath = cachePath;
             }
 
